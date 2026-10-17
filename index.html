@@ -12,7 +12,7 @@
   --brand:#0E8F73;--brand-ink:#FFFFFF;--danger:#D64550;--good:#0E8F73;--gold:#E0A526;--scrim:rgba(10,18,32,.45);
   --shadow:0 1px 2px rgba(15,27,45,.06),0 6px 18px -10px rgba(15,27,45,.18);
   --font:"SF Arabic",-apple-system,system-ui,"Noto Sans Arabic","Tajawal","Cairo",sans-serif;
-  --quran:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Noto Naskh Arabic","Scheherazade New","Traditional Arabic",serif;
+  --quran:"HS Quran","Amiri Quran","KFGQPC Uthmanic Script HAFS","Noto Naskh Arabic","Scheherazade New","Traditional Arabic",serif;
   --spring:cubic-bezier(.3,1.3,.5,1);--out:cubic-bezier(.2,.8,.2,1);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -20,6 +20,7 @@
   --brand:#2FD1AC;--brand-ink:#04211A;--danger:#FF7D86;--good:#38DDB8;--scrim:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0A0F1A;--surf:#131B2B;--surf2:#1B2539;--ink:#F1F5FD;--muted:#9AA9C0;--line:#243049;
   --brand:#2FD1AC;--brand-ink:#04211A;--danger:#FF7D86;--good:#38DDB8;--scrim:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}
+@font-face{font-family:"HS Quran";src:url("fonts/amiri-quran.woff2") format("woff2");font-display:swap}
 html,body{margin:0}[hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;
@@ -260,7 +261,6 @@ select.field{appearance:auto}
       <circle cx="20" cy="20" r="18" fill="url(#mk)" stroke="#B98412" stroke-width="2"/><circle cx="20" cy="20" r="11.5" fill="none" stroke="#B98412" stroke-width="2" opacity=".75"/>
     </svg>
     <h1>حصّالتي</h1>
-    <button class="acct" id="acctBtn" aria-label="الحساب">👤</button>
   </header>
   <main>
     <section id="v-home" class="view" aria-label="الرئيسية">
@@ -356,7 +356,6 @@ select.field{appearance:auto}
 
     <section id="v-set" class="view" aria-label="الإعدادات" hidden>
       <h2 class="page-t">الإعدادات</h2>
-      <div class="group card" id="acctCard"></div>
       <div class="group card">
         <h2>العرض</h2>
         <div><label for="s-cur" style="margin-top:0">العملة</label>
@@ -387,7 +386,7 @@ select.field{appearance:auto}
         <button class="btn outline-danger" id="clearTx">مسح جميع العمليات</button>
         <button class="btn outline-danger" id="resetApp">إعادة ضبط التطبيق</button>
       </div>
-      <p class="foot">بدون إعلانات وبدون تتبّع. بياناتك على جهازك، وتُحفظ في حسابك على جوجل لو سجّلت الدخول.</p>
+      <p class="foot">بدون إعلانات وبدون تتبّع. بياناتك على جهازك داخل التطبيق.</p>
     </section>
   </main>
   <nav class="nav" aria-label="التنقل">
@@ -491,9 +490,10 @@ function persist(touch){
   if(touch!==false)D.updatedAt=new Date().toISOString();
   D.settings=S;
   try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){toast('تعذّر الحفظ على الجهاز. المساحة ممتلئة.','err');return false}
-  if(touch!==false)scheduleSync();
+  mirror();
   return true;
 }
+var mirT=0;function mirror(){clearTimeout(mirT);mirT=setTimeout(function(){try{idbSet('data_v2',JSON.parse(JSON.stringify(D))).catch(function(){})}catch(e){}},400)}
 function setTx(id,rec){D.tx[id]={type:rec.type,cents:rec.cents,note:rec.note||'',at:rec.at,jar:rec.jar,cat:rec.cat||''};var ok=persist();rebuildTX();render();return ok}
 function delTxRaw(id){delete D.tx[id];var ok=persist();rebuildTX();render();return ok}
 function saveS(patch){S=Object.assign({},S,patch);applyTheme();var ok=persist();render();return ok}
@@ -657,19 +657,8 @@ function renderSettings(){
   $$('#themeChips .chip').forEach(function(c){c.setAttribute('aria-pressed',String(c.dataset.theme===S.theme))});
   $('#s-hap').checked=!!S.haptics;
   $('#pinState').textContent=S.pinHash?'مفعّل':'غير مفعّل';$('#pinBtn').textContent=S.pinHash?'إيقاف':'تفعيل';$('#pinMore').hidden=!S.pinHash;
-  $('#dataInfo').textContent=G.signedIn()?'بياناتك محفوظة على جهازك وتتزامن تلقائيًا مع حسابك على جوجل. ننصحك أيضًا بنسخة احتياطية من وقت لآخر.':'بياناتك محفوظة على هذا الجهاز فقط. سجّل الدخول بجوجل من الأعلى لتُحفظ في حسابك، وخذ نسخة احتياطية بانتظام.';
+  $('#dataInfo').textContent='بياناتك محفوظة داخل التطبيق على جهازك، ولا تُمسح إلا إذا حذفت التطبيق أو مسحت بياناته. ننصحك بنسخة احتياطية من وقت لآخر.';
   $('#jarList').innerHTML=S.jars.map(function(j){return '<div class="dlgrow"><div><div class="t" style="font-weight:700">'+esc(j.name)+'</div><div class="s" style="font-size:13px;color:var(--muted)"><span class="num">'+money(jarBal(j.id))+'</span> '+esc(curName())+(j.goalCents>0?' • هدف '+money(j.goalCents):'')+'</div></div><button class="btn ghost small" data-jedit="'+esc(j.id)+'">تعديل</button></div>'}).join('');
-  renderAcct();
-}
-function renderAcct(){
-  var u=G.user(),c=$('#acctCard'),b=$('#acctBtn');
-  if(u){
-    b.textContent=(u.name||u.email||'G').trim().charAt(0).toUpperCase();
-    c.innerHTML='<h2>حساب جوجل</h2><div class="row"><div><div class="t">'+esc(u.name||'')+'</div><div class="s" dir="ltr" style="text-align:right">'+esc(u.email||'')+'</div></div></div><p class="hint" style="margin:0">'+(G.lastSync()?'آخر مزامنة: '+esc(fmtAt(G.lastSync())):'لم تتم مزامنة بعد')+'</p><button class="btn primary small" id="syncNow">مزامنة الآن</button><button class="btn ghost small" id="gOut">تسجيل الخروج</button>';
-  }else{
-    b.textContent='👤';
-    c.innerHTML='<h2>حساب جوجل</h2><p class="hint" style="margin:0">سجّل الدخول بحسابك على جوجل ليُحفظ كل شيء في حسابك وتسترجعه على أي جهاز.</p><button class="btn primary small" id="gIn">تسجيل الدخول بجوجل</button>';
-  }
 }
 function render(){
   renderHome();renderLog();renderStats();renderSettings();
@@ -925,8 +914,8 @@ async function clearTx(){
   D.tx={};persist();rebuildTX();render();toast('تم مسح جميع العمليات');
 }
 async function resetApp(skip){
-  if(!skip&&!(await ask('إعادة ضبط التطبيق','سيتم حذف كل عملياتك وأهدافك وإعداداتك والرقم السري من هذا الجهاز نهائيًا. (بياناتك على حساب جوجل، إن وُجدت، لا تُمسح.)','إعادة الضبط',true)))return;
-  D.tx={};D.settings={};D.syncedVersion='';S=Object.assign({},JSON.parse(JSON.stringify(DEF)));
+  if(!skip&&!(await ask('إعادة ضبط التطبيق','سيتم حذف كل عملياتك وأهدافك وإعداداتك والرقم السري من هذا الجهاز نهائيًا.','إعادة الضبط',true)))return;
+  D.tx={};D.settings={};S=Object.assign({},JSON.parse(JSON.stringify(DEF)));
   persist();rebuildTX();applyTheme();unlocked=true;render();toast('تمت إعادة ضبط التطبيق');
 }
 
@@ -1213,138 +1202,10 @@ function openFeature(spec){
   if(k==='azkar')azkarPage(p[1]);else if(k==='quran')quranPage(p[1]?+p[1]:0);else if(k==='tasbih')tasbihPage();else if(k==='zakat')zakatPage();else if(k==='sadaqa')sadaqaPage();else if(k==='reminders')remindersPage();
 }
 
-/* ---------- Google account (device-code sign-in + Drive appData backup) ---------- */
-var HS_G={id:'',secret:''};
-var G=(function(){
-  var GK='hs_google',GC='hs_gcfg',SCOPE='openid email profile https://www.googleapis.com/auth/drive.appdata',FN='hassalaty-data.json';
-  function rd(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
-  function wr(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-  function cfg(){var c=rd(GC);return (c&&c.id&&c.secret)?c:(HS_G.id&&HS_G.secret?HS_G:null)}
-  function form(o){return Object.keys(o).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(o[k])}).join('&')}
-  async function post(url,o){var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:form(o)});var j={};try{j=await r.json()}catch(e){}return {ok:r.ok,j:j}}
-  function jwt(t){try{var b=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';return JSON.parse(decodeURIComponent(escape(atob(b))))}catch(e){return {}}}
-  function openUrl(u){try{var B=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Browser;if(B&&B.open){B.open({url:u});return}}catch(e){}window.open(u,'_blank')}
-  var syncing=false,timer=0;
-  var api={
-    signedIn:function(){var t=rd(GK);return !!(t&&t.refresh)},
-    user:function(){var t=rd(GK);return t&&t.refresh?t.user:null},
-    lastSync:function(){return D.lastSyncAt||''},
-    configured:function(){return !!cfg()},
-    configSheet:function(){
-      return new Promise(function(res){
-        var c=rd(GC)||{},done=false,sh=sheet('إعداد ربط جوجل','<p class="hint" style="margin:0">أدخل بيانات الربط التي أنشأتها في Google Cloud (مرة واحدة فقط). نوع العميل: «TVs and Limited Input devices».</p><label for="gc-id">Client ID</label><input id="gc-id" class="field" dir="ltr" autocomplete="off" value="'+esc(c.id||'')+'"><label for="gc-sec">Client secret</label><input id="gc-sec" class="field" dir="ltr" autocomplete="off" value="'+esc(c.secret||'')+'"><p class="err" id="gc-e" hidden></p><div class="actions"><button class="btn primary" id="gc-ok">حفظ</button><button class="btn ghost" id="gc-no">إلغاء</button></div>',{onClose:function(){if(!done)res(false)}});
-        $('#gc-no',sh.el).onclick=function(){sh.close()};
-        $('#gc-ok',sh.el).onclick=function(){var id=$('#gc-id',sh.el).value.trim(),sec=$('#gc-sec',sh.el).value.trim();
-          if(id.indexOf('.apps.googleusercontent.com')<0||sec.length<8){var e=$('#gc-e',sh.el);e.textContent='راجع القيمتين، الـ Client ID ينتهي بـ apps.googleusercontent.com.';e.hidden=false;return}
-          wr(GC,{id:id,secret:sec});done=true;res(true);sh.close()};
-      });
-    },
-    signIn:async function(){
-      if(!cfg()){if(!(await api.configSheet()))return false}
-      var c=cfg(),dc;
-      try{dc=await post('https://oauth2.googleapis.com/device/code',{client_id:c.id,scope:SCOPE})}catch(e){toast('تعذّر الاتصال. تأكد من الإنترنت.','err');return false}
-      if(!dc.ok||!dc.j.device_code){toast('رفضت جوجل الطلب. راجع إعداد الربط (Client ID والنوع).','err');return false}
-      return new Promise(function(res){
-        var stop=false,interval=Math.max(5,dc.j.interval||5),exp=Date.now()+(dc.j.expires_in||900)*1000,busy=false,finished=false;
-        var sh=sheet('تسجيل الدخول بجوجل','<p class="msg">1) اضغط «افتح صفحة جوجل».<br>2) اكتب هذا الكود، واختر حسابك، ووافق على الصلاحيات.<br>3) ارجع للتطبيق وسيكمل تلقائيًا.</p><div class="code" id="gcode"></div><div class="actions"><button class="btn primary" id="g-open">افتح صفحة جوجل</button><button class="btn ghost" id="g-copy">نسخ الكود</button><button class="btn ghost" id="g-x">إلغاء</button></div><p class="hint" id="g-st" style="text-align:center">في انتظار الموافقة…</p>',{onClose:function(){stop=true;if(!finished)res(false)}});
-        $('#gcode',sh.el).textContent=dc.j.user_code;
-        $('#g-open',sh.el).onclick=function(){openUrl(dc.j.verification_url||dc.j.verification_uri||'https://www.google.com/device')};
-        $('#g-copy',sh.el).onclick=function(){try{navigator.clipboard.writeText(dc.j.user_code).then(function(){toast('تم نسخ الكود')})}catch(e){}};
-        $('#g-x',sh.el).onclick=function(){sh.close()};
-        async function poll(){
-          if(stop||busy)return;if(Date.now()>exp){toast('انتهت مهلة الكود، حاول من جديد','err');sh.close();return}
-          busy=true;var r;
-          try{r=await post('https://oauth2.googleapis.com/token',{client_id:c.id,client_secret:c.secret,device_code:dc.j.device_code,grant_type:'urn:ietf:params:oauth:grant-type:device_code'})}catch(e){busy=false;return schedule()}
-          busy=false;
-          if(r.ok&&r.j.refresh_token){
-            if((r.j.scope||'').indexOf('drive.appdata')<0){toast('لازم توافق على صلاحية الحفظ في حسابك.','err');sh.close();return}
-            var u=jwt(r.j.id_token||'');
-            wr(GK,{refresh:r.j.refresh_token,access:r.j.access_token,exp:Date.now()+(r.j.expires_in||3600)*1000,user:{email:u.email||'',name:u.name||u.email||'',pic:u.picture||''}});
-            finished=true;res(true);sh.close();return;
-          }
-          var er=r.j&&r.j.error;
-          if(er==='slow_down')interval+=5;
-          else if(er==='access_denied'){toast('تم رفض الطلب.','err');sh.close();return}
-          else if(er==='expired_token'){toast('انتهت مهلة الكود، حاول من جديد','err');sh.close();return}
-          else if(er&&er!=='authorization_pending'){toast('خطأ من جوجل: '+er,'err');sh.close();return}
-          schedule();
-        }
-        function schedule(){if(!stop)setTimeout(poll,interval*1000)}
-        document.addEventListener('visibilitychange',function vc(){if(stop){document.removeEventListener('visibilitychange',vc);return}if(!document.hidden)poll()});
-        schedule();
-      });
-    },
-    signOut:function(){try{localStorage.removeItem(GK)}catch(e){}D.syncedVersion='';persist(false);renderAcct();renderSettings()},
-    access:async function(){
-      var t=rd(GK),c=cfg();if(!t||!c)throw new Error('auth');
-      if(t.exp>Date.now()+60000)return t.access;
-      var r=await post('https://oauth2.googleapis.com/token',{client_id:c.id,client_secret:c.secret,refresh_token:t.refresh,grant_type:'refresh_token'});
-      if(!r.ok){if(r.j&&r.j.error==='invalid_grant'){api.signOut();toast('انتهت صلاحية الدخول. سجّل الدخول بجوجل من جديد.','err')}throw new Error('refresh')}
-      t.access=r.j.access_token;t.exp=Date.now()+(r.j.expires_in||3600)*1000;wr(GK,t);return t.access;
-    },
-    blob:function(){return {app:'hassalaty',version:2,updatedAt:D.updatedAt,settings:{currency:S.currency,jars:S.jars,curJar:S.curJar,challenge:S.challenge,zk:S.zk,qfont:S.qfont,quranLast:S.quranLast},tx:D.tx}},
-    applyBlob:function(b){
-      if(!b||b.app!=='hassalaty'||typeof b.tx!=='object')throw new Error('bad');
-      var s=b.settings||{},jars=Array.isArray(s.jars)&&s.jars.length?s.jars:S.jars;
-      D.tx=b.tx;S=Object.assign({},S,{currency:s.currency in CUR?s.currency:S.currency,jars:jars,curJar:jars.some(function(j){return j.id===s.curJar})?s.curJar:jars[0].id,challenge:s.challenge||null,zk:Object.assign({},DEF.zk,s.zk||{}),qfont:s.qfont||S.qfont,quranLast:s.quranLast||null});
-      D.updatedAt=b.updatedAt||new Date().toISOString();D.syncedVersion=D.updatedAt;D.lastSyncAt=new Date().toISOString();
-      persist(false);rebuildTX();render();
-    },
-    sync:async function(manual){
-      if(!api.signedIn()||syncing)return;syncing=true;
-      try{
-        var tk=await api.access(),H={Authorization:'Bearer '+tk};
-        var lr=await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1&q='+encodeURIComponent("name='"+FN+"'")+'&fields='+encodeURIComponent('files(id)'),{headers:H});
-        if(!lr.ok)throw new Error('list '+lr.status);
-        var lj=await lr.json(),f=lj.files&&lj.files[0],remote=null;
-        if(f){var dr=await fetch('https://www.googleapis.com/drive/v3/files/'+f.id+'?alt=media',{headers:H});if(!dr.ok)throw new Error('get '+dr.status);remote=JSON.parse(await dr.text())}
-        var l=D.updatedAt||'',r=remote&&remote.updatedAt||'',s=D.syncedVersion||'',hasLocal=Object.keys(D.tx).length>0;
-        async function push(){
-          var body=JSON.stringify(api.blob()),r2;
-          if(f)r2=await fetch('https://www.googleapis.com/upload/drive/v3/files/'+f.id+'?uploadType=media',{method:'PATCH',headers:Object.assign({'Content-Type':'application/json'},H),body:body});
-          else{var bd='hsb'+Date.now();r2=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:Object.assign({'Content-Type':'multipart/related; boundary='+bd},H),body:'--'+bd+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:FN,parents:['appDataFolder']})+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+bd+'--'})}
-          if(!r2.ok)throw new Error('put '+r2.status);
-          D.syncedVersion=l;D.lastSyncAt=new Date().toISOString();persist(false);renderAcct();if(manual)toast('تمت المزامنة مع حسابك ✓');
-        }
-        function pull(){api.applyBlob(remote);renderAcct();if(manual)toast('تم تحميل بياناتك من حسابك ✓')}
-        if(!remote){if(l||hasLocal){if(!l){D.updatedAt=new Date().toISOString();l=D.updatedAt}await push()}else{D.lastSyncAt=new Date().toISOString();persist(false);renderAcct()}}
-        else if(l===r){D.syncedVersion=l;D.lastSyncAt=new Date().toISOString();persist(false);renderAcct();if(manual)toast('كل شيء محدّث ✓')}
-        else if(s&&l===s&&r>s)pull();
-        else if(s&&r===s&&l>s)await push();
-        else if(!hasLocal)pull();
-        else{
-          syncing=false;
-          await new Promise(function(done){
-            var sh=sheet('اختلاف في البيانات','<p class="msg">يوجد بيانات على حسابك وبيانات مختلفة على هذا الجهاز. أيهما تريد الاحتفاظ به؟ (الآخر سيُستبدل.)</p><div class="actions"><button class="btn primary" id="cf-r">بيانات حسابك على جوجل</button><button class="btn ghost" id="cf-l">بيانات هذا الجهاز</button></div>',{onClose:function(){done()}});
-            $('#cf-r',sh.el).onclick=function(){sh.close();pull()};
-            $('#cf-l',sh.el).onclick=async function(){sh.close();D.updatedAt=new Date().toISOString();l=D.updatedAt;try{await push()}catch(e){toast('تعذّرت المزامنة','err')}};
-          });
-        }
-      }catch(e){if(manual)toast('تعذّرت المزامنة. تأكد من الإنترنت وحاول مرة أخرى.','err')}
-      syncing=false;
-    },
-    schedule:function(){if(!api.signedIn())return;clearTimeout(timer);timer=setTimeout(function(){api.sync(false)},2500)}
-  };
-  return api;
-})();
-function scheduleSync(){G.schedule()}
-function syncNow(m){return G.sync(m)}
-
-/* ---------- welcome ---------- */
-function welcome(){
-  var ov=document.createElement('div');ov.className='welcome';
-  ov.innerHTML='<div class="w-in"><svg viewBox="0 0 220 200" aria-hidden="true"><use href="#jarBody" fill="#9fb4d6" fill-opacity=".16"/><g clip-path="url(#jarClip)"><rect x="30" y="80" width="160" height="110" fill="url(#coins)"/></g><use href="#jarBody" fill="none" stroke="#9fb4d6" stroke-opacity=".75" stroke-width="3"/><rect x="60" y="18" width="100" height="26" rx="11" fill="url(#lidG)" stroke="#9A6C0C" stroke-width="2"/><rect x="94" y="26" width="32" height="6" rx="3" fill="#6B4607"/></svg><h1>أهلًا بك في حصّالتي</h1><p>سجّل الدخول بحساب جوجل ليُحفظ كل شيء في حسابك وتسترجعه على أي جهاز، أو ابدأ بدون حساب.</p><button class="btn gbtn" id="w-g"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>المتابعة بحساب جوجل</button><button class="btn ghost" id="w-s">ابدأ بدون حساب</button></div>';
-  document.body.appendChild(ov);
-  function fin(){D.welcomed=true;persist(false);ov.remove()}
-  $('#w-s',ov).onclick=fin;
-  $('#w-g',ov).onclick=async function(){if(await G.signIn()){fin();render();toast('تم تسجيل الدخول ✓');syncNow(true)}};
-}
-
 /* ---------- wiring ---------- */
 $$('.nav button').forEach(function(b){b.onclick=function(){show(b.dataset.view)}});
 document.addEventListener('click',function(e){var o=e.target.closest('[data-open]');if(o&&!o.closest('.page'))openFeature(o.dataset.open)});
 $('#toLog').onclick=function(){show('log')};
-$('#acctBtn').onclick=function(){show('set')};
 $('#btnAdd').onclick=function(){txSheet('in')};
 $('#btnOut').onclick=function(){txSheet('out')};
 $('#goalEdit').onclick=goalSheet;$('#goalNew').onclick=goalSheet;
@@ -1408,17 +1269,11 @@ $('#bkImport').onclick=function(){
 };
 $('#bkFile').onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)importBackup(f)};
 $('#clearTx').onclick=clearTx;$('#resetApp').onclick=function(){resetApp(false)};
-$('#acctCard').addEventListener('click',async function(e){
-  if(e.target.closest('#gIn')){if(await G.signIn()){render();toast('تم تسجيل الدخول ✓');syncNow(true)}}
-  else if(e.target.closest('#gOut')){if(await ask('تسجيل الخروج','سيتوقف الحفظ في حسابك على هذا الجهاز. بياناتك على الجهاز وعلى الحساب تبقى كما هي.','تسجيل الخروج',false)){G.signOut();toast('تم تسجيل الخروج')}}
-  else if(e.target.closest('#syncNow'))syncNow(true);
-});
-document.addEventListener('visibilitychange',function(){if(!document.hidden&&G.signedIn())syncNow(false)});
-
 /* ---------- boot ---------- */
 loadData();applyTheme();ready=true;render();show('home');qState();
-lockIfNeeded().then(function(){if(!D.welcomed)welcome()});
-if(G.signedIn())setTimeout(function(){syncNow(false)},1200);
+lockIfNeeded();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+if(!D.updatedAt&&!Object.keys(D.tx).length){idbGet('data_v2').then(function(v){if(v&&v.tx&&Object.keys(v.tx).length){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return}loadData();render();toast('تم استرجاع بياناتك المحفوظة')}}).catch(function(){})}
 setTimeout(function(){if(!QURAN&&navigator.onLine!==false)qEnsure()},4000);
 if(window.Capacitor&&LN&&S.rem&&Object.keys(S.rem).some(function(k){return S.rem[k].on}))setTimeout(applyReminders,3000);
 })();
