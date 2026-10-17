@@ -859,8 +859,7 @@ async function hashPin(pin,salt){
   var input=String(salt)+':'+String(pin);
   try{if(window.crypto&&crypto.subtle&&window.TextEncoder){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input));return Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('')}}
   catch(e){}
-  var h1=2166136261;for(var i=0;i<input.length;i++){h1^=input.charCodeAt(i);h1=Math.imul(h1,16777619)}
-  return 'f'+(h1>>>0).toString(16);
+  var h=5381;for(var i=0;i<input.length;i++)h=((h<<5)+h+input.charCodeAt(i))>>>0;return 'x'+h.toString(16);
 }
 function pinPad(o){
   return new Promise(function(res){
