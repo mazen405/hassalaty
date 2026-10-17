@@ -257,6 +257,49 @@ select.field{appearance:auto}
 .dlgrow:last-child{border-bottom:0}
 .dlgrow input[type=time]{width:112px;min-height:44px;padding:0 8px;font-size:15px}
 .code{font:800 34px var(--font);letter-spacing:4px;direction:ltr;text-align:center;background:var(--surf2);border-radius:16px;padding:14px;margin:12px 0}
+
+/* Premium motion pass: subtle, fast, and consistent across the app */
+@keyframes screenReveal{0%{opacity:0;filter:blur(3px);transform:translate3d(0,10px,0) scale(.992)}100%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1)}}
+@keyframes softGlow{0%,100%{box-shadow:var(--shadow)}50%{box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 18%,transparent),0 10px 30px -14px color-mix(in srgb,var(--brand) 32%,transparent)}}
+@keyframes iconWiggle{0%,100%{rotate:0deg}25%{rotate:-5deg}65%{rotate:4deg}}
+@keyframes shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 28%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@keyframes springIn{0%{opacity:0;transform:translateY(12px) scale(.96)}70%{opacity:1;transform:translateY(-2px) scale(1.012)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes navPop{0%{transform:scale(1)}42%{transform:scale(1.14)}72%{transform:scale(.97)}100%{transform:scale(1)}}
+.view:not([hidden])>*{animation:screenReveal .42s var(--out) both}
+.view:not([hidden])>:nth-child(2){animation-delay:.035s}
+.view:not([hidden])>:nth-child(3){animation-delay:.07s}
+.view:not([hidden])>:nth-child(4){animation-delay:.105s}
+.view:not([hidden])>:nth-child(5){animation-delay:.14s}
+.view:not([hidden])>:nth-child(n+6){animation-delay:.17s}
+.card,.jar-card,.zcard,.ftile,.goal,.stat-card{transition:transform .32s var(--spring),box-shadow .32s var(--out),border-color .25s}
+.card:active,.jar-card:active,.zcard:active,.ftile:active,.goal:active,.stat-card:active{transform:scale(.985)}
+button,.btn,.chip,.jchip,.cell,.nav button{ -webkit-tap-highlight-color:transparent; }
+.btn{transition:transform .28s var(--spring),box-shadow .28s,filter .2s,background .2s}
+.btn:active{transform:scale(.965);filter:brightness(1.08)}
+.btn.primary{background-image:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.16) 45%,transparent 70%);background-size:220% 100%;background-position:120% 0}
+.btn.primary:active{background-position:0 0}
+.chip:active,.jchip:active,.cell:active{transform:scale(.94)}
+input,select,textarea{transition:border-color .22s,box-shadow .22s,background .22s}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 13%,transparent)}
+.bar i,.mbar i,.catrow .cb i{will-change:transform}
+.nav button{transition:color .25s,transform .3s var(--spring),filter .25s}
+.nav button[aria-current="page"]{filter:drop-shadow(0 2px 7px color-mix(in srgb,var(--brand) 25%,transparent))}
+.nav button:active{transform:scale(.9)}
+.pill{transition:transform .48s cubic-bezier(.22,1.2,.36,1),width .3s var(--spring);will-change:transform}
+.pill::before{transition:background .25s,box-shadow .3s;box-shadow:0 0 18px color-mix(in srgb,var(--brand) 12%,transparent)}
+.top .mark{animation:softGlow 5s ease-in-out infinite}
+.bal .num.bump{animation:bump .48s var(--spring)}
+.txlist .txw{transition:background .2s,transform .28s var(--spring)}
+.txlist .txw:active{transform:scale(.985)}
+.sheet{transform-origin:bottom center}
+.backdrop{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.welcome .tour-mark{animation:float 3.5s ease-in-out infinite,softGlow 4s ease-in-out infinite}
+.tour-progress i{transition:width .35s var(--spring),background .25s,transform .25s}
+.tour-progress i.on{transform:scaleY(1.15)}
+.toast-show,#toast.show{animation:springIn .32s var(--spring)}
+@media (prefers-reduced-motion:reduce){.view:not([hidden])>*,.top .mark,.welcome .tour-mark{animation:none!important}}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
