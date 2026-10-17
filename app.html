@@ -212,6 +212,7 @@ select.field{appearance:auto}
 .cf i{position:absolute;left:50%;top:38%;width:9px;height:14px;border-radius:3px;opacity:0;animation:cf 1.6s cubic-bezier(.15,.7,.3,1) forwards}
 @keyframes cf{0%{opacity:1;transform:translate3d(0,0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--r))}}
 
+.dhikr-strip{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:0 16px 12px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));border-radius:14px;background:color-mix(in srgb,var(--gold) 7%,var(--surf));color:var(--ink);font-size:13px;font-weight:800;text-align:center}.dhikr-sep{color:var(--gold)}.deen-shortcuts{margin-bottom:14px}.developer-credit{display:inline-block;margin-top:7px;font-size:12px;letter-spacing:.4px;color:var(--muted);font-weight:800}
 /* welcome */
 .welcome{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 20%,color-mix(in srgb,var(--brand) 17%,var(--bg)),var(--bg) 65%);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .3s}
 .tour-mark{width:112px;height:112px;margin:0 auto 12px;border-radius:36px;display:grid;place-items:center;font-size:54px;color:var(--brand);background:var(--surf);border:1px solid var(--line);box-shadow:0 20px 70px color-mix(in srgb,var(--brand) 20%,transparent);animation:float 3.5s ease-in-out infinite;transform-origin:center}
@@ -312,9 +313,11 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,v
     </svg>
     <h1>حصّالتي</h1>
   </header>
+  <div class="dhikr-strip" aria-label="ذكر الله والصلاة على النبي"><span>اللهم صلِّ وسلم على نبينا محمد ﷺ</span><span class="dhikr-sep">•</span><span>سبحان الله وبحمده</span></div>
   <main>
     <section id="v-home" class="view" aria-label="الرئيسية">
       <div class="jars" id="jars" role="group" aria-label="الحصّالات"></div>
+      <div class="card deen-shortcuts"><div class="sec-h"><h2>الصدقة والزكاة</h2></div><div class="actions"><button class="btn primary" data-open="sadaqa">🤲 الصدقة</button><button class="btn ghost" data-open="zakat">🧮 الزكاة</button></div></div>
       <div class="card hero">
         <p class="lbl" id="jarLbl">إجمالي مدخراتك</p>
         <p class="bal"><span class="num" id="bal">—</span><span class="cur" id="curName">جنيه مصري</span></p>
@@ -388,23 +391,6 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,v
       <div class="card" id="chalCard"></div>
     </section>
 
-    <section id="v-faith" class="view" aria-label="إيماني" hidden>
-      <h2 class="page-t">إيماني</h2>
-      <div class="card" id="faithNudge" hidden></div>
-      <div class="note"><b>تنبيه مهم:</b> المحتوى الديني للتذكير والتعلّم، وقد تقع أخطاء في النصوص أو الأحكام أو التصنيف. تحقّق من القرآن والأذكار من مصدر موثوق، واسأل دار الإفتاء المصرية أو عالمًا موثوقًا في مسائل الفتوى. لا تعتمد على التطبيق وحده في تحديد حكم شرعي.</div>
-      <div class="fgrid">
-        <button class="ftile" data-open="azkar:morning"><span class="ic">🌅</span><b>أذكار الصباح</b><span>حصن المسلم</span></button>
-        <button class="ftile" data-open="azkar:evening"><span class="ic">🌙</span><b>أذكار المساء</b><span>حصن المسلم</span></button>
-        <button class="ftile" data-open="azkar:prayer"><span class="ic">🕌</span><b>بعد الصلاة</b><span>التسبيح والأذكار</span></button>
-        <button class="ftile" data-open="azkar:sleep"><span class="ic">🛏️</span><b>النوم والاستيقاظ</b><span>أذكار ودعاء</span></button>
-        <button class="ftile wide" data-open="quran"><span class="ic">📖</span><b>القرآن الكريم</b><span id="qState">المصحف كامل للقراءة بدون إنترنت</span></button>
-        <button class="ftile" data-open="tasbih"><span class="ic">📿</span><b>السبحة</b><span>عدّاد التسبيح</span></button>
-        <button class="ftile" data-open="zakat"><span class="ic">🧮</span><b>حاسبة الزكاة</b><span>النصاب والمقدار</span></button>
-        <button class="ftile" data-open="sadaqa"><span class="ic">🤲</span><b>الصدقة</b><span>سجّل وتابع صدقاتك</span></button>
-        <button class="ftile" data-open="reminders"><span class="ic">🔔</span><b>التذكيرات</b><span>أذكار، صدقة، زكاة، ادخار</span></button>
-      </div>
-    </section>
-
     <section id="v-set" class="view" aria-label="الإعدادات" hidden>
       <h2 class="page-t">الإعدادات</h2>
       <div class="group card">
@@ -447,7 +433,7 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,v
         <button class="btn outline-danger" id="resetApp">إعادة ضبط التطبيق</button>
       </div>
       <div class="group card"><h2>مساعدة وتعلّم</h2><p class="hint" style="margin:0">شرح مبسّط لأهم أقسام التطبيق، ويمكنك تخطّيه في أي وقت.</p><button class="btn ghost" id="helpTour">ابدأ الشرح</button></div>
-      <p class="foot">بدون إعلانات وبدون تتبّع. بياناتك على جهازك داخل التطبيق.</p>
+      <p class="foot">بدون إعلانات وبدون تتبّع. بياناتك على جهازك داخل التطبيق.<br><span class="developer-credit">Developed by Mazen</span></p>
     </section>
   </main>
   <nav class="nav" aria-label="التنقل">
@@ -455,7 +441,6 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,v
       <button data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>الرئيسية</button>
       <button data-view="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>السجل</button>
       <button data-view="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>إحصائيات</button>
-      <button data-view="faith"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>إيماني</button>
       <button data-view="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>الإعدادات</button>
     </div>
   </nav>
@@ -738,7 +723,7 @@ function renderSettings(){
 function render(){
   renderHome();renderLog();renderStats();renderSettings();
 }
-var VIEWS=['home','log','stats','faith','set'];
+var VIEWS=['home','log','stats','set'];
 function show(v){
   VIEWS.forEach(function(n){$('#v-'+n).hidden=n!==v});
   $$('.nav button').forEach(function(b){if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
@@ -1373,7 +1358,7 @@ function startTour(manual){
     {icon:'🏺',title:'الحصّالات والأهداف',body:'أنشئ حصّالة لكل هدف، وحدد مبلغًا وتاريخًا اختياريًا. شريط التقدم يوضح قربك من الهدف.'},
     {icon:'↗',title:'الإيداع والمصروفات',body:'سجّل كل مبلغ داخل أو خارج، واختار تصنيفًا واضحًا. راجع سجل العمليات لو احتجت تعدّل أو تحذف عملية.'},
     {icon:'▦',title:'الميزانيات والإحصائيات',body:'حدد حدودًا شهرية للتصنيفات، واستخدم الإحصائيات لمتابعة دخلك ومصروفاتك وتحديات الادخار.'},
-    {icon:'🤲',title:'الصدقة والزكاة',body:'الصدقة التطوعية ممكن تبدأ بأي مبلغ وفي أي وقت. زكاة المال لها شروط منها النصاب والحول، والحاسبة إرشادية فقط. راجع التنبيه الديني داخل قسم «إيماني».'},
+    {icon:'🤲',title:'الصدقة والزكاة',body:'الصدقة التطوعية ممكن تبدأ بأي مبلغ وفي أي وقت. زكاة المال لها شروط منها النصاب والحول، والحاسبة إرشادية فقط. استخدم حاسبة الزكاة للتقدير الإرشادي.'},
     {icon:'🔒',title:'حماية بياناتك',body:'الرقم السري يحمي فتح التطبيق لكنه ليس بديلًا عن النسخة الاحتياطية. صدّر نسخة احتياطية واحفظها بمكان آمن.'}
   ];var idx=0,ov=document.createElement('div');ov.className='welcome';ov.style.zIndex='5000';ov.innerHTML='<div class="w-in"><div class="tour-mark" id="tourIcon">✦</div><div class="tour-progress" id="tourProg"></div><h1 id="tourTitle"></h1><p id="tourBody"></p><div class="actions"><button class="btn primary" id="tourNext">التالي</button><button class="btn ghost" id="tourSkip">تخطّي الشرح</button></div></div>';document.body.appendChild(ov);
   var icon=$('#tourIcon',ov),title=$('#tourTitle',ov),body=$('#tourBody',ov),next=$('#tourNext',ov),prog=$('#tourProg',ov);
