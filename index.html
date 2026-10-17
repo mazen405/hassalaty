@@ -1204,40 +1204,47 @@ function tasbihPage(){
 
 /* ---------- Zakat ---------- */
 function zakatPage(){
-  var pg=openPage('حاسبة الزكاة'),zk=S.zk,total=totalBal();
+  var pg=openPage('الزكاة ببساطة'),zk=S.zk,total=totalBal();
   function fv(c){return c?esc(money(c).replace(/,/g,'')):''}
-  pg.body.innerHTML='<div class="card"><p class="hint" style="margin:0">بحسب دار الإفتاء المصرية: نصاب زكاة المال قيمة <b>85 جرامًا من الذهب عيار 21</b>. يبدأ الحول من أول يوم يبلغ فيه المال النصاب، فإذا مرّ <b>عام هجري كامل (نحو 354 يومًا)</b> مع تحقق الشروط وجبت الزكاة بنسبة <b>2.5%</b>. هذه حاسبة إرشادية وليست فتوى شخصية.</p>'+
-    '<label for="z-g">سعر جرام الذهب عيار 21 اليوم ('+esc(curName())+')</label><input id="z-g" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.gold)+'">'+
-    '<label>مجموع حصّالاتك</label><div class="field" style="display:flex;align-items:center"><span class="num">'+money(total)+'</span></div>'+
-    '<label for="z-o">مدخرات أخرى (نقد، حساب بنكي، ذهب...)</label><input id="z-o" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.other)+'">'+
-    '<label for="z-d">ديون حالّة عليك</label><input id="z-d" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.debt)+'">'+
-    '<label for="z-s">تاريخ أول بلوغ للنصاب (بداية الحول الهجري)</label><input id="z-s" type="date" class="field" max="'+today()+'" value="'+esc(zk.start||'')+'"><p class="hint">إذا لم يبلغ مالك النصاب فلا يبدأ الحول. إذا نقص المال عن النصاب خلال السنة أو عليك ديون أو عندك ذهب أو تجارة، فقد تختلف طريقة الحساب حسب الحالة؛ راجع دار الإفتاء المصرية.</p>'+
-    '<button class="btn primary" style="width:100%;margin-top:16px" id="z-go">احسب</button><div id="z-res"></div></div>'+
-    '<p class="hint" style="margin:12px 4px 0">هذه الحاسبة للمساعدة، وللحالات الخاصة (ذهب مُستعمل، أسهم، تجارة...) راجع دار الإفتاء أو أحد أهل العلم.</p>';
+  pg.body.innerHTML=
+    '<div class="card"><h2 style="margin:0 0 8px">يعني إيه زكاة المال؟</h2><p style="margin:0">الزكاة جزء من المال واجب إخراجه للفئات المستحقة، لكن مش على أي مبلغ معاك. فيه شرطان أساسيان هنا: مالك يوصل إلى <b>النصاب</b>، ويمر عليه <b>عام هجري كامل</b> مع تحقق الشروط.</p></div>'+
+    '<div class="card"><h2 style="margin:0 0 8px">احسبها في 3 خطوات</h2>'+
+    '<p style="margin:6px 0"><b>1) النصاب:</b> أقل قيمة للمال يبدأ عندها حساب الزكاة. الحاسبة تستخدم قيمة <b>85 جرام ذهب عيار 21</b>، لذلك اكتب سعر الجرام اليوم.</p>'+
+    '<p style="margin:6px 0"><b>2) اجمع مالك:</b> رصيد الحصّالات + المدخرات والنقد والحسابات التي تدخل في حساب الزكاة، ثم اطرح الديون الحالّة التي تؤثر على الحساب.</p>'+
+    '<p style="margin:6px 0"><b>3) الحول والمقدار:</b> إذا بلغ المال النصاب ومر عام هجري كامل مع تحقق الشروط، فالمقدار المعتاد هو <b>2.5% من المال الزكوي</b>، يعني اضرب المبلغ في 0.025.</p></div>'+
+    '<div class="note"><b>مثال سريع:</b> لو المال الذي تجب فيه الزكاة 100,000 جنيه، فـ 2.5% = 2,500 جنيه. المثال للتوضيح فقط، ولا يعني أن كل شخص عليه زكاة تلقائيًا.</div>'+
+    '<div class="card"><h2 style="margin:0 0 6px">بيانات حسابك</h2><p class="hint" style="margin:0">املأ الخانات، وبعدها اضغط «احسب». لو مش عارف سعر الذهب، تقدر تجيبه من مصدر موثوق اليوم، لأن السعر بيتغير.</p>'+
+    '<label for="z-g">سعر جرام الذهب عيار 21 اليوم ('+esc(curName())+')</label><input id="z-g" class="field" inputmode="decimal" dir="ltr" placeholder="مثال: 5000" value="'+fv(zk.gold)+'">'+
+    '<label>إجمالي حصّالاتك</label><div class="field" style="display:flex;align-items:center"><span class="num">'+money(total)+'</span></div>'+
+    '<label for="z-o">مدخرات أخرى تدخل في الحساب</label><input id="z-o" class="field" inputmode="decimal" dir="ltr" placeholder="النقد والحسابات وغيرها" value="'+fv(zk.other)+'"><p class="hint">لو مش عندك مدخرات أخرى، سيبها صفر.</p>'+
+    '<label for="z-d">ديون حالّة عليك وتؤثر على الحساب</label><input id="z-d" class="field" inputmode="decimal" dir="ltr" placeholder="لو مفيش اكتب 0" value="'+fv(zk.debt)+'">'+
+    '<label for="z-s">تاريخ بداية الحول (اختياري للتذكير)</label><input id="z-s" type="date" class="field" max="'+today()+'" value="'+esc(zk.start||'')+'"><p class="hint">اكتب تاريخ أول مرة وصل فيه مالك للنصاب. لو مش متأكد من التاريخ، سيبه فاضي واستشر جهة موثوقة.</p>'+
+    '<button class="btn primary" style="width:100%;margin-top:16px" id="z-go">احسب الزكاة</button><div id="z-res"></div></div>'+
+    '<div class="note"><b>مهم:</b> الحاسبة إرشادية وليست فتوى. حساب الذهب المستعمل، أموال التجارة، الأسهم، الديون، أو تغيّر المال خلال السنة قد يحتاج حكمًا خاصًا. لو حالتك مش واضحة، راجع دار الإفتاء المصرية أو عالمًا موثوقًا قبل إخراج المبلغ.</div>';
   function num(id){var v=$(id,pg.el).value.trim();if(!v)return 0;var c=parseAmount(v);return c===null?NaN:c}
   $('#z-go',pg.el).onclick=function(){
     var g=num('#z-g'),o=num('#z-o'),d=num('#z-d'),st=$('#z-s',pg.el).value,r=$('#z-res',pg.el);
-    if(isNaN(g)||isNaN(o)||isNaN(d)){r.innerHTML='<div class="res"><span class="err">راجع الأرقام المكتوبة.</span></div>';return}
-    if(!g){r.innerHTML='<div class="res"><span class="err">اكتب سعر جرام الذهب عيار 21 اليوم لحساب النصاب.</span></div>';return}
+    if(isNaN(g)||isNaN(o)||isNaN(d)||o<0||d<0||g<0){r.innerHTML='<div class="res"><span class="err">راجع الأرقام. اكتب أرقامًا صحيحة غير سالبة.</span></div>';return}
+    if(!g){r.innerHTML='<div class="res"><span class="err">اكتب سعر جرام الذهب عيار 21 اليوم حتى نحسب النصاب.</span></div>';return}
     saveS({zk:{gold:g,other:o,debt:d,start:st||''}});
     var nisab=Math.round(85*g),net=total+o-d,h='';
-    h+='النصاب: <b class="num">'+money(nisab)+'</b> '+esc(curName())+'<br>صافي مالك: <b class="num">'+money(Math.max(net,0))+'</b> '+esc(curName())+'<br>';
-    if(net<nisab){r.innerHTML='<div class="res">'+h+'<b>مالك لم يبلغ النصاب، فلا زكاة عليك الآن.</b></div>';return}
+    h+='<p>قيمة النصاب التقريبية (85 جرام ذهب عيار 21): <b class="num">'+money(nisab)+'</b> '+esc(curName())+'</p>';
+    h+='<p>صافي المال حسب الأرقام المدخلة: <b class="num">'+money(Math.max(net,0))+'</b> '+esc(curName())+'</p>';
+    if(net<nisab){r.innerHTML='<div class="res">'+h+'<b>حسب الأرقام دي، مالك أقل من النصاب؛ غالبًا لا تجب زكاة المال الآن.</b><p class="hint">لو عندك ذهب أو تجارة أو أموال أخرى، قد يتغير الحساب.</p></div>';return}
     var z=Math.round(net*25/1000);
-    h+='<b>مالك بلغ النصاب.</b> إذا مرّ عليه عام هجري كامل فزكاته: <b class="num">'+money(z)+'</b> '+esc(curName());
-    if(st){var due=new Date(new Date(st+'T12:00:00').getTime()+354*864e5);h+='<br>موعد تمام الحول تقريبًا: '+esc(dfmt.format(due))}
+    h+='<p><b>مالك وصل للنصاب.</b> لو مرّ عليه عام هجري كامل مع تحقق الشروط، فالمبلغ التقديري للزكاة هو:</p><h2 class="num" style="margin:4px 0">'+money(z)+' '+esc(curName())+'</h2><p class="hint">الحساب: '+money(net)+' × 2.5% = '+money(z)+'.</p>';
+    if(st){var due=new Date(new Date(st+'T12:00:00').getTime()+354*864e5);h+='<p>موعد تمام الحول التقريبي: '+esc(dfmt.format(due))+'</p>'}
     h+='<div class="actions" style="margin-top:12px"><button class="btn primary small" id="z-log">سجّل إخراج الزكاة</button>'+(st?'<button class="btn ghost small" id="z-rem">ذكّرني بموعد الزكاة</button>':'')+'</div>';
     r.innerHTML='<div class="res yes">'+h+'</div>';
     $('#z-log',pg.el).onclick=function(){txSheet('out',null,{cat:'zakat',cents:z,note:'زكاة المال'})};
     var zr=$('#z-rem',pg.el);if(zr)zr.onclick=async function(){
       var at=new Date(new Date(st+'T09:00:00').getTime()+354*864e5).getTime();
-      if(at<Date.now()){toast('موعد الحول مرّ بالفعل، أخرج زكاتك إن شاء الله','err');return}
+      if(at<Date.now()){toast('موعد الحول مرّ بالفعل، راجع تاريخك وتأكد من حسابك','err');return}
       S.rem.zakat={on:true,at:at};persist();
-      if(await applyReminders())toast('سنذكّرك بموعد الزكاة إن شاء الله')
+      if(await applyReminders())toast('تم ضبط تذكير موعد الزكاة')
     };
   };
 }
-
 /* ---------- Sadaqa ---------- */
 function sadaqaPage(){
   var pg=openPage('الصدقة'),now=new Date(),ms=new Date(now.getFullYear(),now.getMonth(),1).getTime(),ys=new Date(now.getFullYear(),0,1).getTime();
