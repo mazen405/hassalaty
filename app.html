@@ -884,18 +884,26 @@ function pinPad(o){
   });
 }
 async function lockIfNeeded(){
-  if(!S.pinHash||unlocked||locking)return;locking=true;
-  var salt=S.pinSalt,hash=S.pinHash;
-  await pinPad({title:'أدخل الرقم السري',sub:'حصّالتي محمية برقم سري',
-    verify:async function(p){return (await hashPin(p,S.pinSalt||salt))===(S.pinHash||hash)},
-    onForgot:async function(){var y=await ask('إعادة ضبط التطبيق','لا يمكن استرجاع الرقم السري. إعادة الضبط تمسح كل عملياتك وإعداداتك من هذا الجهاز. هل تريد المتابعة؟','نعم، امسح كل شيء',true);if(!y)return false;await resetApp(true);return true}});
-  unlocked=true;locking=false;
+  if(!S.pinHash||unlocked)return;
+  if(locking){while(locking)await new Promise(function(r){setTimeout(r,40)});return;}
+  locking=true;
+  try{
+    while(S.pinHash&&!unlocked){
+      var salt=S.pinSalt,hash=S.pinHash;
+      var entered=await pinPad({title:'أدخل الرقم السري',sub:'حصّالتي محمية برقم سري',
+        verify:async function(p){return (await hashPin(p,salt))===hash},
+        onForgot:async function(){var y=await ask('إعادة ضبط التطبيق','لا يمكن استرجاع الرقم السري. إعادة الضبط تمسح كل عملياتك وإعداداتك من هذا الجهاز. هل تريد المتابعة؟','نعم، امسح كل شيء',true);if(!y)return false;await resetApp(true);return true}});
+      if(!S.pinHash){unlocked=true;break;}
+      if(entered!==null){unlocked=true;break;}
+    }
+  }finally{locking=false}
 }
 async function setPin(){
-  var a=await pinPad({title:'اختر رقمًا سريًا',sub:'4 أرقام',cancelable:true});if(!a)return;
-  var b=await pinPad({title:'أعد كتابة الرقم السري',cancelable:true,verify:async function(p){return p===a},errMsg:'الرقمان غير متطابقين، حاول مرة أخرى'});if(!b)return;
-  var salt=Math.random().toString(36).slice(2);
-  if(saveS({pinSalt:salt,pinHash:await hashPin(a,salt)})){unlocked=true;toast('تم تفعيل الرقم السري')}
+  var a=await pinPad({title:'أنشئ رقمًا سريًا جديدًا',sub:'اختر 4 أرقام لا تستخدمها في حساباتك الأخرى',cancelable:true});if(!a)return;
+  var b=await pinPad({title:'تأكيد الرقم السري',sub:'أعد إدخال الأرقام نفسها',cancelable:true,verify:async function(p){return p===a},errMsg:'الرقمان غير متطابقين، حاول مرة أخرى'});if(!b)return;
+  var salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+  var hashed=await hashPin(a,salt);
+  if(saveS({pinSalt:salt,pinHash:hashed})){unlocked=true;toast('تم حفظ الرقم السري الجديد')}
 }
 async function verifyCurrent(title){
   var r=await pinPad({title:title,cancelable:true,verify:async function(p){return (await hashPin(p,S.pinSalt))===S.pinHash}});return !!r;
