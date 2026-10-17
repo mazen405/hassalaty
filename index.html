@@ -168,8 +168,8 @@ select.field{appearance:auto}
 
 /* tabs */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surf);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px))}
-.nav-in{--i:0;position:relative;max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-.pill{position:absolute;top:2px;bottom:2px;inset-inline-start:0;width:20%;display:flex;justify-content:center;pointer-events:none;transform:translate3d(0,0,0);transition:transform .45s var(--spring);will-change:transform}
+.nav-in{--i:0;position:relative;max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.pill{position:absolute;top:2px;bottom:2px;inset-inline-start:0;width:25%;display:flex;justify-content:center;pointer-events:none;transform:translate3d(0,0,0);transition:transform .45s var(--spring);will-change:transform}
 .nav-pop{animation:navPop .42s var(--spring)}@keyframes navPop{0%{transform:scale(1)}45%{transform:scale(1.13)}100%{transform:scale(1)}}
 .btn:active,.chip:active,.cell:active,.ftile:active,.jchip:active{transform:scale(.96)}
 .nav button:active{transform:scale(.9)}
@@ -212,7 +212,12 @@ select.field{appearance:auto}
 .cf i{position:absolute;left:50%;top:38%;width:9px;height:14px;border-radius:3px;opacity:0;animation:cf 1.6s cubic-bezier(.15,.7,.3,1) forwards}
 @keyframes cf{0%{opacity:1;transform:translate3d(0,0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--r))}}
 
-.dhikr-strip{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:0 16px 12px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));border-radius:14px;background:color-mix(in srgb,var(--gold) 7%,var(--surf));color:var(--ink);font-size:13px;font-weight:800;text-align:center}.dhikr-sep{color:var(--gold)}.deen-shortcuts{margin-bottom:14px}.developer-credit{display:inline-block;margin-top:7px;font-size:12px;letter-spacing:.4px;color:var(--muted);font-weight:800}
+.header-meta{margin-inline-start:auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;direction:ltr;max-width:58%}
+.header-dhikr{display:flex;flex-direction:column;align-items:flex-start;gap:1px;color:var(--muted);font-size:10px;line-height:1.45;font-weight:800;direction:rtl;text-align:right;white-space:nowrap}
+.header-dhikr span:first-child{font-size:9.5px}
+.developer-credit{display:inline-block;margin:0;font-size:9.5px;letter-spacing:.2px;color:var(--muted);font-weight:800;white-space:nowrap;direction:ltr}
+.deen-shortcuts{margin-bottom:14px}
+@media(max-width:380px){.top{gap:8px}.top .mark{width:32px;height:32px}.top h1{font-size:20px}.header-meta{max-width:56%}.header-dhikr{font-size:9px}.header-dhikr span:first-child{font-size:8.5px}.developer-credit{font-size:8.5px}}
 /* welcome */
 .welcome{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 20%,color-mix(in srgb,var(--brand) 17%,var(--bg)),var(--bg) 65%);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .3s}
 .tour-mark{width:112px;height:112px;margin:0 auto 12px;border-radius:36px;display:grid;place-items:center;font-size:54px;color:var(--brand);background:var(--surf);border:1px solid var(--line);box-shadow:0 20px 70px color-mix(in srgb,var(--brand) 20%,transparent);animation:float 3.5s ease-in-out infinite;transform-origin:center}
@@ -312,8 +317,11 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,v
       <circle cx="20" cy="20" r="18" fill="url(#mk)" stroke="#B98412" stroke-width="2"/><circle cx="20" cy="20" r="11.5" fill="none" stroke="#B98412" stroke-width="2" opacity=".75"/>
     </svg>
     <h1>حصّالتي</h1>
+    <div class="header-meta" aria-label="ذكر الله ومطور التطبيق">
+      <div class="header-dhikr"><span>اللهم صلِّ على نبينا محمد ﷺ</span><span>اذكر الله</span></div>
+      <span class="developer-credit">Developer: Mazen</span>
+    </div>
   </header>
-  <div class="dhikr-strip" aria-label="ذكر الله والصلاة على النبي"><span>اللهم صلِّ وسلم على نبينا محمد ﷺ</span><span class="dhikr-sep">•</span><span>سبحان الله وبحمده</span></div>
   <main>
     <section id="v-home" class="view" aria-label="الرئيسية">
       <div class="jars" id="jars" role="group" aria-label="الحصّالات"></div>
@@ -727,7 +735,7 @@ var VIEWS=['home','log','stats','set'];
 function show(v){
   VIEWS.forEach(function(n){$('#v-'+n).hidden=n!==v});
   $$('.nav button').forEach(function(b){if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  var ni=VIEWS.indexOf(v);var nav=$('.nav-in'),pill=nav&&$('.pill',nav);if(nav)nav.style.setProperty('--i',ni);if(pill){pill.style.width='20%';pill.style.insetInlineStart='0';pill.style.transform='translate3d('+((document.documentElement.dir==='rtl'?-1:1)*ni*100)+'%,0,0)';}var active=$('.nav button[data-view="'+v+'"]');if(active){active.classList.remove('nav-pop');void active.offsetWidth;active.classList.add('nav-pop');}window.scrollTo(0,0);
+  var ni=VIEWS.indexOf(v);var nav=$('.nav-in'),pill=nav&&$('.pill',nav);if(nav)nav.style.setProperty('--i',ni);if(pill){pill.style.width='25%';pill.style.insetInlineStart='0';pill.style.transform='translate3d('+((document.documentElement.dir==='rtl'?-1:1)*ni*100)+'%,0,0)';}var active=$('.nav button[data-view="'+v+'"]');if(active){active.classList.remove('nav-pop');void active.offsetWidth;active.classList.add('nav-pop');}window.scrollTo(0,0);
 }
 
 /* ---------- sheets ---------- */
