@@ -1,11 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0B1729"/><stop offset="1" stop-color="#123D48"/></linearGradient><linearGradient id="jar" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#55E0B7"/><stop offset="1" stop-color="#0E8F73"/></linearGradient></defs>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06090E"/><stop offset=".48" stop-color="#15211F"/><stop offset="1" stop-color="#020407"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#D8A64C" stop-opacity=".32"/><stop offset="1" stop-color="#D8A64C" stop-opacity="0"/></radialGradient>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2=".2"><stop stop-color="#FFFFFF" stop-opacity=".78"/><stop offset=".13" stop-color="#D4F7EB" stop-opacity=".18"/><stop offset=".36" stop-color="#FFFFFF" stop-opacity=".05"/><stop offset=".7" stop-color="#F3C76A" stop-opacity=".16"/><stop offset=".88" stop-color="#FFFFFF" stop-opacity=".42"/><stop offset="1" stop-color="#8ABAA8" stop-opacity=".14"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2=".15" y2="1"><stop stop-color="#FFF0B7"/><stop offset=".22" stop-color="#F8D47A"/><stop offset=".52" stop-color="#B97A24"/><stop offset=".72" stop-color="#FFE6A0"/><stop offset="1" stop-color="#8E5317"/></linearGradient>
+ <linearGradient id="coin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF1B2"/><stop offset=".5" stop-color="#D49A39"/><stop offset="1" stop-color="#8B541A"/></linearGradient>
+ <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+ <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <clipPath id="jarClip"><path d="M153 169Q153 150 173 150H339Q359 150 359 169L350 350Q348 385 315 391H197Q164 385 162 350Z"/></clipPath>
+</defs>
 <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<circle cx="256" cy="246" r="166" fill="#2FD1AC" opacity=".08"/>
-<path d="M183 111h146v42l-20 24v199c0 25-20 45-45 45h-16c-25 0-45-20-45-45V177l-20-24z" fill="url(#jar)" stroke="#C4FFEC" stroke-width="10" stroke-linejoin="round"/>
-<path d="M198 145h116" stroke="#E6FFF7" stroke-width="15" stroke-linecap="round"/>
-<path d="M216 292c28-25 54-25 82 0" fill="none" stroke="#07392F" stroke-width="15" stroke-linecap="round"/>
-<circle cx="232" cy="239" r="10" fill="#07392F"/><circle cx="282" cy="239" r="10" fill="#07392F"/>
-<path d="M356 105l13 27 29 4-21 20 5 29-26-14-26 14 5-29-21-20 29-4z" fill="#E7B64D"/>
-<text x="256" y="476" text-anchor="middle" font-family="Arial,sans-serif" font-size="31" font-weight="800" fill="#F2FFF9">حَصّالَتي</text>
+<circle cx="256" cy="245" r="220" fill="url(#halo)"/>
+<path d="M74 401Q250 360 439 405" fill="none" stroke="#C28C3D" stroke-opacity=".18" stroke-width="2"/>
+<ellipse cx="256" cy="402" rx="137" ry="21" fill="#000" opacity=".8" filter="url(#shadow)"/>
+<!-- gold jar lid -->
+<rect x="165" y="115" width="182" height="48" rx="13" fill="url(#gold)" stroke="#FFE9A1" stroke-width="3"/>
+<path d="M176 126H336M176 137H336M176 148H336" stroke="#85501D" stroke-opacity=".7" stroke-width="3"/>
+<rect x="183" y="99" width="146" height="23" rx="9" fill="url(#gold)" stroke="#FFF0BC" stroke-width="3"/>
+<!-- coins inside glass -->
+<g clip-path="url(#jarClip)">
+ <rect x="150" y="165" width="220" height="235" fill="#0D302A" opacity=".75"/>
+ <path d="M155 318Q190 297 222 318T290 315T360 310V400H155Z" fill="#0E5C48" opacity=".65"/>
+ <g fill="url(#coin)" stroke="#FFE7A0" stroke-width="2">
+  <ellipse cx="206" cy="352" rx="37" ry="13"/><path d="M169 351v13q35 26 74 0v-13q-37 23-74 0z"/>
+  <ellipse cx="282" cy="365" rx="43" ry="14"/><path d="M239 365v13q41 26 86 0v-13q-44 23-86 0z"/>
+  <ellipse cx="329" cy="338" rx="30" ry="11"/><path d="M299 338v12q28 20 60 0v-12q-30 19-60 0z"/>
+  <ellipse cx="244" cy="332" rx="31" ry="11"/><path d="M213 332v11q29 20 62 0v-11q-31 18-62 0z"/>
+ </g>
+ <g stroke="#FFE8A3" stroke-width="3" stroke-linecap="round" fill="none" filter="url(#glow)">
+  <path d="M256 321V235"/><path d="M256 274Q215 270 210 234Q246 236 256 274"/><path d="M256 258Q294 249 299 215Q266 221 256 258"/><path d="M256 293Q222 293 216 267Q246 269 256 293"/>
+ </g>
+ <g fill="#4DCB91"><path d="M255 274Q216 269 211 235Q244 236 255 274Z"/><path d="M258 258Q293 249 299 216Q266 221 258 258Z"/><path d="M255 293Q224 293 217 268Q246 270 255 293Z"/></g>
+</g>
+<!-- reflective glass silhouette -->
+<path d="M153 169Q153 150 173 150H339Q359 150 359 169L350 350Q348 385 315 391H197Q164 385 162 350Z" fill="url(#glass)" stroke="#F5D89A" stroke-width="5"/>
+<path d="M171 176Q166 275 179 342Q182 359 193 365" fill="none" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="8" stroke-linecap="round"/>
+<path d="M340 180Q345 275 332 343" fill="none" stroke="#EBC56F" stroke-opacity=".85" stroke-width="5" stroke-linecap="round"/>
+<path d="M187 177H324" stroke="#FFFFFF" stroke-opacity=".65" stroke-width="3"/>
+<!-- foreground coin seal -->
+<circle cx="256" cy="305" r="37" fill="#06120F" fill-opacity=".72" stroke="url(#gold)" stroke-width="3"/>
+<path d="M256 330V284M256 303Q233 301 232 281Q252 283 256 303M257 294Q279 290 281 272Q261 276 257 294" fill="none" stroke="#72D8A7" stroke-width="5" stroke-linecap="round"/>
+<path d="M388 100l8 18 20 2-15 13 4 20-17-10-17 10 4-20-15-13 20-2z" fill="url(#gold)" filter="url(#glow)"/>
+<path d="M116 176l5 10 11 1-8 8 2 11-10-5-10 5 2-11-8-8 11-1z" fill="#E5B65D" opacity=".8"/>
+<text x="256" y="455" text-anchor="middle" font-family="Arial,sans-serif" font-size="51" font-weight="900" fill="url(#gold)" stroke="#5A3512" stroke-width="1">حصّالتي</text>
+<path d="M163 470H349" stroke="#D6A34A" stroke-opacity=".6" stroke-width="2"/>
 </svg>
