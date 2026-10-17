@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head>
+<script>/*hs-updater*/(function(){try{if(!window.__hsLoaded&&location.protocol!=='file:'){var c=localStorage.getItem('hs_app_html');if(c&&c.length>20000){window.__hsLoaded=1;document.open();document.write(c);document.close();}}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#E9EFFB">
@@ -15,12 +16,12 @@
   --bg:#E9EFFB; --ink:#0E1B2E; --muted:#44546B; --line:rgba(14,27,46,.14);
   --brand:#0A8570; --brand-ink:#FFFFFF; --danger:#D13B45; --good:#0A8570;
   --b1:rgba(104,150,255,.75); --b2:rgba(255,150,196,.68); --b3:rgba(96,226,196,.62); --b4:rgba(255,205,110,.6);
-  --g-fill:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.07) 55%,rgba(255,255,255,.2));
-  --g-fill-strong:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.34) 55%,rgba(255,255,255,.5));
+  --g-fill:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.015) 55%,rgba(255,255,255,.1));
+  --g-fill-strong:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,.26) 55%,rgba(255,255,255,.4));
   --g-rim-a:rgba(255,255,255,.98); --g-rim-b:rgba(255,255,255,.1);
   --g-inner:inset 2px 3px 4px -2px rgba(255,255,255,.95),inset -2px -3px 5px -3px rgba(255,255,255,.55),inset 0 0 28px rgba(255,255,255,.12);
   --g-drop:0 28px 44px -28px rgba(34,56,110,.5);
-  --field:rgba(255,255,255,.42); --pill:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.35));
+  --field:rgba(255,255,255,.3); --pill:linear-gradient(135deg,rgba(255,255,255,.75),rgba(255,255,255,.35));
   --scrim:rgba(20,32,60,.28);
   --coin:#F4C03E; --coin-edge:#B98412; --coin-hi:#FFE9A6;
   --font-display:"SF Arabic",-apple-system,"Cairo","Tajawal",system-ui,sans-serif;
@@ -33,7 +34,7 @@
     --bg:#060A14; --ink:#F2F6FF; --muted:#A3B1C8; --line:rgba(255,255,255,.16);
     --brand:#35D3B1; --brand-ink:#032019; --danger:#FF7B82; --good:#4FE0BF;
     --b1:rgba(92,90,230,.62); --b2:rgba(224,64,140,.38); --b3:rgba(24,190,170,.42); --b4:rgba(245,170,40,.26);
-    --g-fill:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.03) 55%,rgba(255,255,255,.08));
+    --g-fill:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.012) 55%,rgba(255,255,255,.05));
     --g-fill-strong:linear-gradient(135deg,rgba(40,52,84,.72),rgba(24,32,54,.62) 55%,rgba(34,44,72,.7));
     --g-rim-a:rgba(255,255,255,.6); --g-rim-b:rgba(255,255,255,.05);
     --g-inner:inset 2px 3px 4px -2px rgba(255,255,255,.5),inset -2px -3px 5px -3px rgba(255,255,255,.2),inset 0 0 28px rgba(255,255,255,.05);
@@ -46,7 +47,7 @@
   --bg:#060A14; --ink:#F2F6FF; --muted:#A3B1C8; --line:rgba(255,255,255,.16);
   --brand:#35D3B1; --brand-ink:#032019; --danger:#FF7B82; --good:#4FE0BF;
   --b1:rgba(92,90,230,.62); --b2:rgba(224,64,140,.38); --b3:rgba(24,190,170,.42); --b4:rgba(245,170,40,.26);
-  --g-fill:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.03) 55%,rgba(255,255,255,.08));
+  --g-fill:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.012) 55%,rgba(255,255,255,.05));
   --g-fill-strong:linear-gradient(135deg,rgba(40,52,84,.72),rgba(24,32,54,.62) 55%,rgba(34,44,72,.7));
   --g-rim-a:rgba(255,255,255,.6); --g-rim-b:rgba(255,255,255,.05);
   --g-inner:inset 2px 3px 4px -2px rgba(255,255,255,.5),inset -2px -3px 5px -3px rgba(255,255,255,.2),inset 0 0 28px rgba(255,255,255,.05);
@@ -74,7 +75,7 @@ button{cursor:pointer}
 .glass,.sheet,.nav-in,.btn.ghost,.btn.outline-danger,.chip,.keys button,#toast,.note,.tx-ic,.pill{
   position:relative;isolation:isolate;
   background:var(--g-fill);
-  -webkit-backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);backdrop-filter:blur(14px) saturate(1.9) brightness(1.04);
+  -webkit-backdrop-filter:blur(9px) saturate(2) brightness(1.05);backdrop-filter:blur(9px) saturate(2) brightness(1.05);
   box-shadow:var(--g-inner),var(--g-drop);
 }
 .glass::before,.sheet::before,.nav-in::before,.btn.ghost::before,.btn.outline-danger::before,.chip::before,.keys button::before,#toast::before,.note::before,.tx-ic::before,.pill::before,.btn.primary::before,.btn.danger::before{
@@ -102,8 +103,9 @@ button{cursor:pointer}
 .note{border-radius:20px;padding:10px 16px;font-size:13px;line-height:1.5;margin-bottom:16px;color:var(--ink)}
 .page-t{font:800 24px/1.2 var(--font-display);margin:0}
 .view{display:flex;flex-direction:column;gap:16px}
-.view:not([hidden]){animation:enter .5s cubic-bezier(.2,.8,.2,1)}
-@keyframes enter{from{opacity:0;transform:translateY(12px)}}
+.view:not([hidden])>*{animation:enter .6s cubic-bezier(.2,.8,.2,1) both}
+.view:not([hidden])>:nth-child(2){animation-delay:.07s}.view:not([hidden])>:nth-child(3){animation-delay:.14s}.view:not([hidden])>:nth-child(4){animation-delay:.21s}.view:not([hidden])>:nth-child(5){animation-delay:.28s}
+@keyframes enter{from{opacity:0;transform:translate3d(0,22px,0) scale(.97)}}
 
 /* Home */
 .lbl{color:var(--muted);font-size:15px;margin:0}
@@ -113,7 +115,8 @@ button{cursor:pointer}
 .bal .cur{font:700 17px var(--font-display);color:var(--muted)}
 .empty-hint{color:var(--muted);margin:6px 0 0;font-size:15px}
 .jarwrap{display:flex;justify-content:center;padding-block:10px 4px}
-#jar{width:min(208px,66%);height:auto;overflow:visible;filter:drop-shadow(0 18px 14px rgba(20,36,80,.22))}
+#jar{width:min(208px,66%);height:auto;overflow:visible;animation:float 5s ease-in-out infinite;will-change:transform}
+@keyframes float{50%{transform:translate3d(0,-7px,0)}}
 #lvl{transition:y .9s var(--spring),height .9s var(--spring)}
 #coin{opacity:0}
 #coin.drop{animation:coin .9s cubic-bezier(.4,0,.6,1)}
@@ -204,10 +207,10 @@ select.field{appearance:auto}
 .nav button[aria-current="page"] svg{color:var(--brand)}
 
 /* Sheets */
-.backdrop{position:fixed;inset:0;background:var(--scrim);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;
+.backdrop{position:fixed;inset:0;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;
   padding:16px max(16px,env(safe-area-inset-left,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));animation:fade .3s}
 .sheet{width:100%;max-width:520px;max-height:92%;overflow-y:auto;border-radius:36px;padding:12px 20px 22px;animation:rise .55s cubic-bezier(.2,.9,.25,1.1);
-  -webkit-backdrop-filter:blur(30px) saturate(1.9);backdrop-filter:blur(30px) saturate(1.9)}
+  -webkit-backdrop-filter:blur(18px) saturate(2);backdrop-filter:blur(18px) saturate(2)}
 .sheet .grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 12px}
 .sheet h2{font:800 21px var(--font-display);margin:0 0 4px}
 .sheet .actions{margin-top:18px}
@@ -217,7 +220,7 @@ select.field{appearance:auto}
 @keyframes rise{from{transform:translateY(70px) scale(.94);opacity:0}}
 
 /* PIN */
-.pinov{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(44px) saturate(1.7);backdrop-filter:blur(44px) saturate(1.7);
+.pinov{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
   display:flex;align-items:center;justify-content:center;padding:16px}
 .pin-in{width:100%;max-width:320px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .pin-in h2{font:800 22px var(--font-display);margin:8px 0 0}
@@ -234,6 +237,40 @@ select.field{appearance:auto}
   padding:11px 22px;font-weight:700;font-size:15px;opacity:0;pointer-events:none;transition:opacity .25s,transform .55s var(--spring);z-index:3000;max-width:calc(100% - 32px);text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
 #toast.err{color:var(--danger)}
+
+/* perf: only big surfaces blur; small controls stay flat glass */
+.btn.ghost,.btn.outline-danger,.chip,.keys button,#toast,.note,.tx-ic,.pill,.btn.primary,.btn.danger{-webkit-backdrop-filter:none;backdrop-filter:none}
+body{overscroll-behavior-y:none}
+.tx{content-visibility:auto;contain-intrinsic-size:auto 72px}
+.bal .num.bump{animation:bump .6s var(--spring)}
+@keyframes bump{40%{transform:scale(1.06)}}
+.btn.primary{background-size:200% 100%}
+.btn.primary::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);transform:translateX(120%);animation:shine 4.5s ease-in-out 1.2s infinite}
+@keyframes shine{0%,60%{transform:translateX(120%)}100%{transform:translateX(-120%)}}
+.btn.primary{overflow:hidden}
+.cf{position:fixed;inset:0;pointer-events:none;z-index:4000;overflow:hidden}
+.cf i{position:absolute;left:50%;top:38%;width:9px;height:14px;border-radius:3px;opacity:0;animation:cf 1.6s cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes cf{0%{opacity:1;transform:translate3d(0,0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--r))}}
+/* stats */
+.stats .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.tile{border-radius:20px;padding:10px 8px;text-align:center;background:var(--field);box-shadow:inset 0 1px 0 var(--g-rim-b)}
+.tile b{display:block;font:800 16px var(--font-display);overflow-wrap:anywhere}
+.tile span{font-size:12px;color:var(--muted)}
+.tile.in b{color:var(--good)}.tile.out b{color:var(--danger)}
+.mbars{display:flex;justify-content:space-between;align-items:flex-end;gap:6px;height:112px;margin-top:16px}
+.mb{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%}
+.mbar{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+.mbar i{display:block;width:42%;max-width:16px;min-height:3px;height:var(--h);border-radius:8px 8px 3px 3px;transform-origin:bottom;animation:grow .9s var(--spring) both}
+.mbar i.in{background:linear-gradient(180deg,rgba(255,255,255,.5),transparent 60%),var(--good)}
+.mbar i.out{background:linear-gradient(180deg,rgba(255,255,255,.5),transparent 60%),var(--danger);animation-delay:.08s}
+@keyframes grow{from{transform:scaleY(0)}}
+.mb span{font-size:11px;color:var(--muted);white-space:nowrap}
+.forecast{margin:14px 0 0;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.forecast b{color:var(--ink)}
+/* lite mode: no blur, no ambient motion */
+html[data-lite] *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-lite] .glass,html[data-lite] .sheet,html[data-lite] .nav-in{background:var(--g-fill-strong)}
+html[data-lite] .bg i,html[data-lite] #jar,html[data-lite] .btn.primary::after{animation:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -303,6 +340,17 @@ select.field{appearance:auto}
         <div class="sec-h"><h2>آخر عملية</h2><button class="link" id="toLog">عرض السجل</button></div>
         <ul class="txs" id="lastTx"></ul>
       </section>
+
+      <section class="stats glass card" id="stats" hidden>
+        <div class="sec-h"><h2>إحصائياتك</h2></div>
+        <div class="tiles">
+          <div class="tile in"><b class="num" id="stIn">0</b><span>إضافات الشهر</span></div>
+          <div class="tile out"><b class="num" id="stOut">0</b><span>سحوبات الشهر</span></div>
+          <div class="tile"><b class="num" id="stStreak">0</b><span>أيام متتالية</span></div>
+        </div>
+        <div class="mbars" id="mbars" aria-label="آخر 6 شهور"></div>
+        <p class="forecast" id="forecast" hidden></p>
+      </section>
     </section>
 
     <section id="v-log" class="view" aria-label="سجل العمليات" hidden>
@@ -344,6 +392,7 @@ select.field{appearance:auto}
             <button class="chip" data-theme="dark" aria-pressed="false">داكن</button>
           </div></div>
         <div class="row"><label for="s-hap" style="margin:0"><span class="t">اهتزاز خفيف</span><br><span class="s">عند تسجيل أي عملية</span></label><input type="checkbox" class="sw" id="s-hap" role="switch"></div>
+        <div class="row"><label for="s-lite" style="margin:0"><span class="t">وضع الأداء السريع</span><br><span class="s">يلغي الشفافية المموّهة لسلاسة أكبر على الأجهزة الضعيفة</span></label><input type="checkbox" class="sw" id="s-lite" role="switch"></div>
       </div>
       <div class="group glass card">
         <h2>الحماية</h2>
@@ -381,7 +430,7 @@ var $=function(s,r){return (r||document).querySelector(s)};
 var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
 document.documentElement.lang='ar';document.documentElement.dir='rtl';
 var CUR={EGP:'جنيه مصري',USD:'دولار أمريكي',SAR:'ريال سعودي',AED:'درهم إماراتي'};
-var DEF={currency:'EGP',theme:'auto',haptics:true,goalName:'',goalCents:0,pinHash:'',pinSalt:''};
+var DEF={currency:'EGP',theme:'auto',haptics:true,lite:false,goalName:'',goalCents:0,pinHash:'',pinSalt:''};
 var CACHE='hassalaty:cache:v1', THEMEKEY='hassalaty:theme';
 var S=Object.assign({},DEF), TX=[], loaded=false, ready=false, store=null, unlocked=false, locking=false, zc=100;
 var F={q:'',type:'all',per:'all',limit:100};
@@ -461,11 +510,68 @@ function onDocs(list,tentative,fromStore){
   try{localStorage.setItem(THEMEKEY,S.theme)}catch(e){}
   applyTheme(); render(); lockIfNeeded();
 }
-function applyTheme(){var r=document.documentElement;if(S.theme==='light'||S.theme==='dark')r.setAttribute('data-theme',S.theme);else r.removeAttribute('data-theme')}
+function applyTheme(){var r=document.documentElement;if(S.lite)r.setAttribute('data-lite','');else r.removeAttribute('data-lite');if(S.theme==='light'||S.theme==='dark')r.setAttribute('data-theme',S.theme);else r.removeAttribute('data-theme')}
 
 async function saveSettings(patch){
   S=Object.assign({},S,patch); applyTheme(); render();
   return save(function(){return store.set('settings',S)});
+}
+
+
+/* ---------- motion helpers ---------- */
+var shownBal=null,balRaf=0,prevPct=null;
+function reduced(){try{return matchMedia('(prefers-reduced-motion:reduce)').matches}catch(e){return false}}
+function setBal(v){
+  var el=$('#bal');
+  if(shownBal===null||reduced()){el.textContent=money(v);shownBal=v;return}
+  if(v===shownBal)return;
+  cancelAnimationFrame(balRaf);var from=shownBal,t0=performance.now(),D=650;shownBal=v;
+  (function step(n){var p=Math.min(1,(n-t0)/D),e=1-Math.pow(1-p,3);el.textContent=money(Math.round(from+(v-from)*e));if(p<1)balRaf=requestAnimationFrame(step)})(t0);
+  el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');
+}
+function confetti(){
+  if(reduced())return;
+  var c=document.createElement('div');c.className='cf';var cols=['#F4C03E','#FF7BAC','#5FA8FF','#4FE0BF','#FFFFFF','#FFB454'],h='';
+  for(var i=0;i<34;i++){h+='<i style="--dx:'+Math.round((Math.random()-.5)*340)+'px;--dy:'+Math.round(Math.random()*460-80)+'px;--r:'+Math.round(Math.random()*720-360)+'deg;background:'+cols[i%cols.length]+';animation-delay:'+Math.round(Math.random()*120)+'ms"></i>'}
+  c.innerHTML=h;document.body.appendChild(c);setTimeout(function(){c.remove()},2000);
+}
+function celebrate(m){
+  confetti();if(S.haptics){try{navigator.vibrate&&navigator.vibrate([20,40,20])}catch(e){}}
+  toast(m===100?'مبروك! وصلت لهدفك 🎉':'وصلت إلى '+m+'% من هدفك 🎉');
+}
+var AR_M=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function renderStats(){
+  var box=$('#stats');
+  if(!loaded||!TX.length){box.hidden=true;return}
+  box.hidden=false;
+  var now=new Date(),mk=now.getFullYear()*12+now.getMonth(),months={},days={},i,t,d,k;
+  for(i=0;i<TX.length;i++){
+    t=TX[i];d=new Date(t.at);k=d.getFullYear()*12+d.getMonth();
+    var m=months[k]||(months[k]={i:0,o:0});
+    if(t.type==='in'){m.i+=t.cents;days[localDate(t.at)]=1}else m.o+=t.cents;
+  }
+  var cur=months[mk]||{i:0,o:0};
+  $('#stIn').textContent=money(cur.i);$('#stOut').textContent=money(cur.o);
+  var st=0,dd=new Date();if(!days[localDate(dd.toISOString())])dd.setDate(dd.getDate()-1);
+  while(days[localDate(dd.toISOString())]){st++;dd.setDate(dd.getDate()-1)}
+  $('#stStreak').textContent=st;
+  var mx=1,arr=[];
+  for(i=5;i>=0;i--){var v=months[mk-i]||{i:0,o:0};arr.push({k:mk-i,v:v});mx=Math.max(mx,v.i,v.o)}
+  $('#mbars').innerHTML=arr.map(function(a){
+    return '<div class="mb"><div class="mbar"><i class="in" style="--h:'+Math.round(a.v.i*100/mx)+'%"></i><i class="out" style="--h:'+Math.round(a.v.o*100/mx)+'%"></i></div><span>'+AR_M[((a.k%12)+12)%12]+'</span></div>';
+  }).join('');
+  var fc=$('#forecast'),shown=false;
+  if(S.goalCents>0){
+    var left=S.goalCents-balance();
+    if(left<=0){fc.innerHTML='<b>وصلت لهدفك!</b> تستطيع تحديد هدف جديد.';shown=true}
+    else{
+      var first=new Date(TX[TX.length-1].at).getTime(),span=Math.max(30,Math.min(90,(Date.now()-first)/864e5)),cut=Date.now()-90*864e5,net=0;
+      TX.forEach(function(x){if(new Date(x.at).getTime()>=cut)net+=x.type==='in'?x.cents:-x.cents});
+      var perMonth=net/(span/30);
+      if(perMonth>0){var mo=Math.ceil(left/perMonth);fc.innerHTML='بمعدل ادخارك الحالي ستصل لهدفك بعد حوالي <b>'+(mo<=1?'شهر':mo===2?'شهرين':mo<=10?mo+' شهور':mo+' شهرًا')+'</b>.';shown=true}
+    }
+  }
+  fc.hidden=!shown;
 }
 
 /* ---------- rendering ---------- */
@@ -499,9 +605,9 @@ function renderLog(){
 function render(){
   var cur=curName(); $('#curName').textContent=cur;
   $('#btnAdd').disabled=!ready; $('#btnOut').disabled=!ready;
-  if(!loaded){$('#bal').textContent='—';$('#emptyHint').hidden=true}
+  if(!loaded){$('#bal').textContent='—';shownBal=null;$('#emptyHint').hidden=true}
   else{
-    var b=balance(); $('#bal').textContent=money(b); $('#emptyHint').hidden=TX.length>0;
+    var b=balance(); setBal(b); $('#emptyHint').hidden=TX.length>0;
   }
   /* jar level + goal */
   var lvl=$('#lvl'),goal=S.goalCents>0,pct=0,lv=0;
@@ -509,6 +615,7 @@ function render(){
   else if(loaded&&balance()>0){lv=.12}
   if(loaded&&balance()>0)lv=Math.max(lv,.07);
   var h=128*lv; lvl.setAttribute('height',h.toFixed(1)); lvl.setAttribute('y',(190-h).toFixed(1));
+  if(loaded){if(goal&&prevPct!==null&&pct>prevPct){var ms=[100,75,50,25].filter(function(x){return prevPct<x&&pct>=x})[0];if(ms)setTimeout(function(){celebrate(ms)},350)}prevPct=goal?pct:null}
   $('#goalBox').hidden=!(loaded&&goal); $('#noGoal').hidden=!(loaded&&!goal);
   if(loaded&&goal){
     var bal=Math.max(balance(),0);
@@ -519,11 +626,11 @@ function render(){
     $('#goalBar').setAttribute('aria-label','التقدم نحو '+(S.goalName||'الهدف')+': '+pct+'%');
   }
   $('#lastTx').innerHTML=!loaded?'<li class="empty">جارٍ التحميل…</li>':(TX.length?txRow(TX[0],false):'<li class="empty">لم تسجّل أي عملية بعد.</li>');
-  renderLog();
+  renderLog();renderStats();
   /* settings */
   $('#s-cur').value=S.currency in CUR?S.currency:'EGP';
   $$('#themeChips .chip').forEach(function(c){c.setAttribute('aria-pressed',String(c.dataset.theme===S.theme))});
-  $('#s-hap').checked=!!S.haptics;
+  $('#s-hap').checked=!!S.haptics;$('#s-lite').checked=!!S.lite;
   $('#pinState').textContent=S.pinHash?'مفعّل':'غير مفعّل';
   $('#pinBtn').textContent=S.pinHash?'إيقاف':'تفعيل'; $('#pinMore').hidden=!S.pinHash;
   var cloud=store&&store.kind==='cloud';
@@ -562,15 +669,17 @@ function txSheet(mode,tx){
   var title=edit?'تعديل العملية':(isIn?'إضافة مبلغ':'سحب مبلغ');
   var html='<label for="f-amt">المبلغ ('+esc(curName())+')</label>'+
     '<input id="f-amt" class="field big" inputmode="decimal" autocomplete="off" placeholder="0.00" dir="ltr" value="'+(tx?esc(money(tx.cents).replace(/,/g,'')):'')+'">'+
-    (!edit&&isIn?'<div class="chips" style="margin-top:10px">'+[10,20,50,100].map(function(n){return '<button type="button" class="chip" data-q="'+n+'">+'+n+'</button>'}).join('')+'</div>':'')+
+    (!edit&&isIn?'<div class="chips" style="margin-top:10px">'+[10,20,50,100].map(function(n){return '<button type="button" class="chip" data-q="'+n+'"><bdi dir="ltr">+'+n+'</bdi></button>'}).join('')+'</div>':'')+
     (!edit&&!isIn?'<p class="hint">المتاح في الحصّالة: <bdi class="num">'+money(bal)+'</bdi> '+esc(curName())+'</p>':'')+
     '<label for="f-note">ملاحظة (اختياري)</label><input id="f-note" class="field" maxlength="80" placeholder="مثال: فلوس من المصروف" value="'+(tx?esc(tx.note):'')+'">'+
+    (!edit?'<div class="chips" style="margin-top:8px">'+(isIn?['مصروف','هدية','راتب','مكافأة']:['مشتريات','طوارئ','فواتير','ترفيه']).map(function(n){return '<button type="button" class="chip" data-n="'+n+'">'+n+'</button>'}).join('')+'</div>':'')+
     '<label for="f-date">التاريخ</label><input id="f-date" type="date" class="field" max="'+today()+'" value="'+(tx?localDate(tx.at):today())+'">'+
     '<p class="err" id="f-err" role="alert" hidden></p>'+
     '<div class="actions"><button class="btn primary" id="f-ok">'+(edit?'حفظ التعديل':isIn?'تأكيد الإضافة':'تأكيد السحب')+'</button><button class="btn ghost" id="f-no">إلغاء</button></div>';
   var sh=sheet(title,html),el=sh.el,amt=$('#f-amt',el),err=$('#f-err',el),okb=$('#f-ok',el);
   function fail(m){err.textContent=m;err.hidden=false;amt.focus()}
   $$('[data-q]',el).forEach(function(b){b.onclick=function(){var cur=parseAmount(amt.value)||0;amt.value=money(cur+parseInt(b.dataset.q,10)*100).replace(/,/g,'');err.hidden=true}});
+  $$('[data-n]',el).forEach(function(b){b.onclick=function(){$('#f-note',el).value=b.dataset.n}});
   $('#f-no',el).onclick=function(){sh.close()};
   amt.addEventListener('keydown',function(e){if(e.key==='Enter')okb.click()});
   okb.onclick=async function(){
@@ -672,7 +781,7 @@ async function verifyCurrent(title){
 /* ---------- backup / reset ---------- */
 function backupObj(){
   return {app:'hassalaty',version:1,exportedAt:new Date().toISOString(),
-    settings:{currency:S.currency,theme:S.theme,haptics:S.haptics,goalName:S.goalName,goalCents:S.goalCents},
+    settings:{currency:S.currency,theme:S.theme,haptics:S.haptics,lite:S.lite,goalName:S.goalName,goalCents:S.goalCents},
     transactions:TX.map(function(t){return {id:t.id,type:t.type,cents:t.cents,note:t.note,at:t.at}})};
 }
 async function exportBackup(){
@@ -712,7 +821,7 @@ async function importText(text){
     await batch(TX.filter(function(t){return !keep[t.id]}),function(t){return run(function(){return store.del(t.id)})});
     await batch(list,function(t){return run(function(){return store.set(t.id,{type:t.type,cents:t.cents,note:t.note,at:t.at})})});
     var s=obj.settings||{};
-    await saveSettings({currency:s.currency in CUR?s.currency:S.currency,theme:['auto','light','dark'].indexOf(s.theme)>=0?s.theme:S.theme,haptics:s.haptics!==false,goalName:String(s.goalName||'').slice(0,40),goalCents:Number.isInteger(s.goalCents)&&s.goalCents>0?s.goalCents:0});
+    await saveSettings({currency:s.currency in CUR?s.currency:S.currency,theme:['auto','light','dark'].indexOf(s.theme)>=0?s.theme:S.theme,haptics:s.haptics!==false,lite:!!s.lite,goalName:String(s.goalName||'').slice(0,40),goalCents:Number.isInteger(s.goalCents)&&s.goalCents>0?s.goalCents:0});
     toast('تمت استعادة '+list.length+' عملية');
   }catch(e){toast('تعذّرت الاستعادة. تأكد من اتصالك وحاول مرة أخرى.','err')}
 }
@@ -747,6 +856,7 @@ $('#txList').addEventListener('click',function(e){
 $('#s-cur').onchange=function(e){saveSettings({currency:e.target.value})};
 $('#themeChips').addEventListener('click',function(e){var b=e.target.closest('[data-theme]');if(b)saveSettings({theme:b.dataset.theme})});
 $('#s-hap').onchange=function(e){saveSettings({haptics:e.target.checked})};
+$('#s-lite').onchange=function(e){saveSettings({lite:e.target.checked})};
 $('#pinBtn').onclick=async function(){if(!S.pinHash)setPin();else if(await verifyCurrent('أدخل الرقم الحالي')){if(await saveSettings({pinHash:'',pinSalt:''}))toast('تم إيقاف الرقم السري')}};
 $('#pinChange').onclick=async function(){if(await verifyCurrent('أدخل الرقم الحالي'))setPin()};
 $('#bkExport').onclick=exportBackup;
@@ -780,4 +890,5 @@ boot();
 })();
 </script>
 
+<script>/*hs-update-check*/(function(){try{if(!navigator.onLine)return;fetch('https://mazen405.github.io/hassalaty/app.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){if(t&&t.length>20000&&t.indexOf('hs-updater')>-1)localStorage.setItem('hs_app_html',t)}).catch(function(){})}catch(e){}})();</script>
 </body></html>
