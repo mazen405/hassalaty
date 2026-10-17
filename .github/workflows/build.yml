@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p www assets
           cp index.html www/index.html
+          if command -v convert >/dev/null 2>&1; then convert icon.svg -background none -resize 1024x1024 icon.png; fi
           cp icon.png assets/icon-only.png
           cp icon.png assets/icon-foreground.png
           mkdir -p ~/.android
