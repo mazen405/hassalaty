@@ -373,6 +373,15 @@ select.field{appearance:auto}
         <button class="btn ghost small" id="jarAdd">+ حصّالة جديدة</button>
       </div>
       <div class="group card">
+        <h2>الميزانيات الشهرية</h2><p class="hint" style="margin:0">حدّد حدًا لكل تصنيف. يظهر تنبيه عند الوصول إلى 80% وتجاوزه.</p><div id="budgetList"></div><button class="btn ghost small" id="budgetEdit">تعديل الميزانيات</button>
+      </div>
+      <div class="group card">
+        <h2>الإيداع الدوري</h2><p class="hint" style="margin:0">يُنفّذ عند فتح التطبيق إذا حلّ موعده، وليس بالخلفية أثناء إغلاق التطبيق.</p><div id="recurringState" class="hint"></div><button class="btn ghost small" id="recurringEdit">إعداد إيداع دوري</button>
+      </div>
+      <div class="group card">
+        <h2>هدف الصدقة الشهري</h2><p class="hint" style="margin:0">تابع صدقاتك مقارنة بهدف شهري.</p><div id="charityGoalState" class="hint"></div><button class="btn ghost small" id="charityGoalEdit">تحديد هدف الصدقة</button>
+      </div>
+      <div class="group card">
         <h2>الحماية</h2>
         <div class="row"><div><div class="t">رقم سري للتطبيق</div><div class="s" id="pinState">غير مفعّل</div></div><button class="btn ghost small" id="pinBtn">تفعيل</button></div>
         <div id="pinMore" class="row" hidden><span class="s">تغيير الرقم السري</span><button class="btn ghost small" id="pinChange">تغيير</button></div>
@@ -413,7 +422,7 @@ var CATMAP={};CATS_IN.concat(CATS_OUT).forEach(function(c){CATMAP[c[0]]={n:c[1],
 var DEF={currency:'EGP',theme:'auto',haptics:true,pinHash:'',pinSalt:'',
   jars:[{id:'main',name:'حصّالتي',goalName:'',goalCents:0}],curJar:'main',challenge:null,
   rem:{azkarAM:{on:false,h:5,m:30},azkarPM:{on:false,h:16,m:30},kahf:{on:false,h:10,m:0},sadaqa:{on:false,h:20,m:0,freq:'daily'},save:{on:false,h:21,m:0},zakat:{on:false,at:0}},
-  zk:{gold:0,other:0,debt:0,start:''},qfont:28,quranLast:null};
+  zk:{gold:0,other:0,debt:0,start:''},qfont:28,quranLast:null,budgets:{},recurring:{on:false,amount:0,freq:'monthly',day:1,jar:'main',note:'إيداع دوري',last:''},charityGoalCents:0};
 var KEY='hassalaty:v2';
 var D={settings:{},tx:{},updatedAt:'',syncedVersion:'',welcomed:false};
 var S=null, TX=[], ready=false, zc=2100, unlocked=false, locking=false;
@@ -479,6 +488,8 @@ function loadData(){
   S.zk=Object.assign({},DEF.zk,S.zk||{});
   if(!Array.isArray(S.jars)||!S.jars.length)S.jars=JSON.parse(JSON.stringify(DEF.jars));
   if(!S.jars.some(function(j){return j.id===S.curJar}))S.curJar=S.jars[0].id;
+  S.budgets=S.budgets&&typeof S.budgets==='object'?S.budgets:{};
+  S.recurring=Object.assign({},DEF.recurring,S.recurring||{});
   rebuildTX();
 }
 function rebuildTX(){
@@ -494,7 +505,7 @@ function persist(touch){
   return true;
 }
 var mirT=0;function mirror(){clearTimeout(mirT);mirT=setTimeout(function(){try{idbSet('data_v2',JSON.parse(JSON.stringify(D))).catch(function(){})}catch(e){}},400)}
-function setTx(id,rec){D.tx[id]={type:rec.type,cents:rec.cents,note:rec.note||'',at:rec.at,jar:rec.jar,cat:rec.cat||''};var ok=persist();rebuildTX();render();return ok}
+function setTx(id,rec){D.tx[id]={type:rec.type,cents:rec.cents,note:rec.note||'',at:rec.at,jar:rec.jar,cat:rec.cat||''};var ok=persist();rebuildTX();render();if(ok&&rec.type==='out')checkBudgetAlert(rec.cat);return ok}
 function delTxRaw(id){delete D.tx[id];var ok=persist();rebuildTX();render();return ok}
 function saveS(patch){S=Object.assign({},S,patch);applyTheme();var ok=persist();render();return ok}
 function applyTheme(){var r=document.documentElement;if(S.theme==='light'||S.theme==='dark')r.setAttribute('data-theme',S.theme);else r.removeAttribute('data-theme')}
@@ -652,7 +663,19 @@ function renderChallenge(){
   for(var i=1;i<=n;i++){tot+=chalAmt(ch,i);if(done[i])sum+=chalAmt(ch,i);cells+='<button class="cell'+(done[i]?' on':'')+'" data-n="'+i+'">'+i+'<small class="num">'+money(chalAmt(ch,i)).replace(/\.00$/,'')+'</small></button>'}
   c.innerHTML='<div class="sec-h"><h2>🏆 '+(ch.kind==='weeks52'?'تحدّي 52 أسبوع':'تحدّي 30 يوم')+'</h2><button class="link" id="chalStop">إنهاء</button></div><p class="hint" style="margin:0">أنجزت '+cnt+' من '+n+' • '+money(sum)+' من '+money(tot)+' '+esc(curName())+' • حصّالة: '+esc(jarName(ch.jar))+'</p><div class="bar"><i style="--p:'+(cnt/n).toFixed(3)+'"></i></div><div class="grid">'+cells+'</div>';
 }
+function monthSpent(cat){var n=new Date(),from=new Date(n.getFullYear(),n.getMonth(),1).getTime(),sum=0;TX.forEach(function(t){if(t.type==='out'&&t.cat===cat&&new Date(t.at).getTime()>=from)sum+=t.cents});return sum}
+function checkBudgetAlert(cat){var lim=+(S.budgets||{})[cat]||0;if(!lim)return;var pct=Math.floor(monthSpent(cat)*100/lim),key='hs_budget_alert_'+localDate()+'_'+cat,old=0;try{old=+(sessionStorage.getItem(key)||0)}catch(e){}if(pct>=100&&old<100)toast('تجاوزت ميزانية '+((CATMAP[cat]||{}).n||'التصنيف')+' الشهرية','err');else if(pct>=80&&old<80)toast('وصلت إلى '+pct+'% من ميزانية '+((CATMAP[cat]||{}).n||'التصنيف'));try{sessionStorage.setItem(key,String(Math.max(old,pct)))}catch(e){}}
+function editBudgets(){var html='<p class="hint">اكتب الحد الشهري لكل تصنيف، واتركه فارغًا لإلغاء الحد.</p>'+CATS_OUT.map(function(c){return '<label for="bud-'+c[0]+'">'+c[2]+' '+esc(c[1])+'</label><input class="field" id="bud-'+c[0]+'" inputmode="decimal" dir="ltr" placeholder="بدون حد" value="'+(S.budgets[c[0]]?esc(money(S.budgets[c[0]]).replace(/,/g,'')):'')+'">'}).join('')+'<div class="actions"><button class="btn primary" id="bud-save">حفظ</button><button class="btn ghost" id="bud-cancel">إلغاء</button></div>';var sh=sheet('الميزانيات الشهرية',html);$('#bud-cancel',sh.el).onclick=function(){sh.close()};$('#bud-save',sh.el).onclick=function(){var next={};for(var i=0;i<CATS_OUT.length;i++){var k=CATS_OUT[i][0],v=$('#bud-'+k,sh.el).value.trim();if(!v)continue;var n=parseAmount(v);if(n===null){toast('راجع مبلغ '+CATS_OUT[i][1],'err');return}next[k]=n}S.budgets=next;if(persist()){sh.close();render();toast('تم حفظ الميزانيات')}}}
+function editRecurring(){var r=S.recurring||DEF.recurring,html='<label for="rec-amt">مبلغ الإيداع ('+esc(curName())+')</label><input id="rec-amt" class="field" inputmode="decimal" dir="ltr" value="'+(r.amount?esc(money(r.amount).replace(/,/g,'')):'')+'" placeholder="0.00"><label for="rec-freq">التكرار</label><select id="rec-freq" class="field"><option value="weekly" '+(r.freq==='weekly'?'selected':'')+'>أسبوعيًا</option><option value="monthly" '+(r.freq!=='weekly'?'selected':'')+'>شهريًا</option></select><label for="rec-day">يوم الشهر (1-28) أو الأسبوع (0 الأحد إلى 6 السبت)</label><input id="rec-day" class="field" type="number" min="0" max="28" value="'+(r.day===undefined?1:r.day)+'"><label for="rec-jar">الحصّالة</label><select id="rec-jar" class="field">'+S.jars.map(function(j){return '<option value="'+esc(j.id)+'" '+(j.id===r.jar?'selected':'')+'>'+esc(j.name)+'</option>'}).join('')+'</select><label for="rec-note">ملاحظة</label><input id="rec-note" class="field" maxlength="80" value="'+esc(r.note||'إيداع دوري')+'"><div class="row" style="margin-top:12px"><span>تفعيل الإيداع الدوري</span><input type="checkbox" class="sw" id="rec-on" '+(r.on?'checked':'')+'></div><div class="actions"><button class="btn primary" id="rec-save">حفظ</button><button class="btn ghost" id="rec-cancel">إلغاء</button></div>';var sh=sheet('الإيداع الدوري',html);$('#rec-cancel',sh.el).onclick=function(){sh.close()};$('#rec-save',sh.el).onclick=function(){var amount=parseAmount($('#rec-amt',sh.el).value),freq=$('#rec-freq',sh.el).value,day=+$('#rec-day',sh.el).value;if($('#rec-on',sh.el).checked&&amount===null){toast('اكتب مبلغًا صحيحًا أكبر من صفر','err');return}if(freq==='monthly'&&(!Number.isInteger(day)||day<1||day>28)){toast('يوم الشهر يجب أن يكون من 1 إلى 28','err');return}if(freq==='weekly'&&(!Number.isInteger(day)||day<0||day>6)){toast('يوم الأسبوع يجب أن يكون من 0 إلى 6','err');return}S.recurring={on:$('#rec-on',sh.el).checked,amount:amount||0,freq:freq,day:day,jar:$('#rec-jar',sh.el).value,note:$('#rec-note',sh.el).value.trim()||'إيداع دوري',last:r.last||''};if(persist()){sh.close();render();processRecurring();toast('تم حفظ الإيداع الدوري')}}}
+function processRecurring(){var r=S&&S.recurring;if(!r||!r.on||!r.amount)return;var now=new Date(),due=r.freq==='weekly'?now.getDay()===+r.day:now.getDate()>=+r.day;if(!due)return;var period=r.freq==='weekly'?localDate(new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()-r.day+7)%7)).toISOString()):now.getFullYear()+'-'+pad2(now.getMonth()+1);if(r.last===period)return;D.tx[newId()]={type:'in',cents:r.amount,note:r.note||'إيداع دوري',at:now.toISOString(),jar:jarOf(r.jar),cat:'other_in'};r.last=period;S.recurring=r;if(persist()){rebuildTX();render()}}
+function editCharityGoal(){var cur=+S.charityGoalCents||0,sh=sheet('هدف الصدقة الشهري','<label for="cg-amt">الهدف الشهري ('+esc(curName())+')</label><input id="cg-amt" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+(cur?esc(money(cur).replace(/,/g,'')):'')+'"><div class="actions"><button class="btn primary" id="cg-save">حفظ الهدف</button><button class="btn ghost" id="cg-clear">إلغاء الهدف</button><button class="btn ghost" id="cg-cancel">رجوع</button></div>');$('#cg-cancel',sh.el).onclick=function(){sh.close()};$('#cg-clear',sh.el).onclick=function(){S.charityGoalCents=0;if(persist()){sh.close();render()}};$('#cg-save',sh.el).onclick=function(){var v=parseAmount($('#cg-amt',sh.el).value);if(v===null){toast('اكتب مبلغًا صحيحًا','err');return}S.charityGoalCents=v;if(persist()){sh.close();render();toast('تم حفظ هدف الصدقة')}}}
+
 function renderSettings(){
+  var bsum=0,bcount=0;Object.keys(S.budgets||{}).forEach(function(k){var lim=+S.budgets[k]||0;if(lim>0){bsum+=lim;bcount++}});
+  $('#budgetList').innerHTML=bcount?'<div class="hint">تم ضبط '+bcount+' تصنيفات • مجموع الحدود: <b class="num">'+money(bsum)+'</b> '+esc(curName())+'</div>':'<div class="hint">لم تضبط ميزانيات بعد.</div>';
+  var rr=S.recurring||DEF.recurring;$('#recurringState').textContent=rr.on?'مفعّل: '+money(rr.amount)+' '+curName()+' • '+(rr.freq==='weekly'?'أسبوعيًا':'شهريًا')+' • '+esc(jarName(rr.jar)):'غير مفعّل';
+  var cm=new Date(),spent=sumCat(['sadaqa'],new Date(cm.getFullYear(),cm.getMonth(),1).getTime()),cg=+S.charityGoalCents||0;
+  $('#charityGoalState').innerHTML=cg?'هذا الشهر: <b class="num">'+money(spent)+'</b> من <b class="num">'+money(cg)+'</b> '+esc(curName())+' ('+Math.min(100,Math.floor(spent*100/cg))+'%)':'لم يتم تحديد هدف شهري بعد.';
   $('#s-cur').value=S.currency in CUR?S.currency:'EGP';
   $$('#themeChips .chip').forEach(function(c){c.setAttribute('aria-pressed',String(c.dataset.theme===S.theme))});
   $('#s-hap').checked=!!S.haptics;
@@ -1257,6 +1280,7 @@ $('#s-cur').onchange=function(e){saveS({currency:e.target.value})};
 $('#themeChips').addEventListener('click',function(e){var b=e.target.closest('[data-theme]');if(b)saveS({theme:b.dataset.theme})});
 $('#s-hap').onchange=function(e){saveS({haptics:e.target.checked})};
 $('#jarAdd').onclick=function(){jarSheet(null)};
+$('#budgetEdit').onclick=editBudgets;$('#recurringEdit').onclick=editRecurring;$('#charityGoalEdit').onclick=editCharityGoal;
 $('#jarList').addEventListener('click',function(e){var b=e.target.closest('[data-jedit]');if(b){var j=S.jars.filter(function(x){return x.id===b.dataset.jedit})[0];if(j)jarSheet(j)}});
 $('#pinBtn').onclick=async function(){if(!S.pinHash)setPin();else if(await verifyCurrent('أدخل الرقم الحالي')){if(saveS({pinHash:'',pinSalt:''}))toast('تم إيقاف الرقم السري')}};
 $('#pinChange').onclick=async function(){if(await verifyCurrent('أدخل الرقم الحالي'))setPin()};
@@ -1270,7 +1294,7 @@ $('#bkImport').onclick=function(){
 $('#bkFile').onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)importBackup(f)};
 $('#clearTx').onclick=clearTx;$('#resetApp').onclick=function(){resetApp(false)};
 /* ---------- boot ---------- */
-loadData();applyTheme();ready=true;render();show('home');qState();
+loadData();applyTheme();ready=true;processRecurring();render();show('home');qState();
 lockIfNeeded();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 if(!D.updatedAt&&!Object.keys(D.tx).length){idbGet('data_v2').then(function(v){if(v&&v.tx&&Object.keys(v.tx).length){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return}loadData();render();toast('تم استرجاع بياناتك المحفوظة')}}).catch(function(){})}
