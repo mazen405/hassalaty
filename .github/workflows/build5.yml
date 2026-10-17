@@ -45,14 +45,19 @@ jobs:
           npx cap add android
       - name: Android permissions
         run: |
-          sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <application#' android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\\n    <application#' android/app/src/main/AndroidManifest.xml
       - name: Add Quran font
-        continue-on-error: true
         run: |
           mkdir -p www/fonts
-          f=$(find node_modules/@fontsource/amiri-quran/files -name '*arabic-400-normal.woff2' | head -1)
-          echo "font: $f"
+          f=$(find node_modules/@fontsource/amiri-quran/files -type f -name '*arabic-400-normal.woff2' -print -quit)
+          if [ -z "$f" ]; then
+            echo 'ERROR: Amiri Quran Arabic WOFF2 font file was not found.' >&2
+            find node_modules/@fontsource/amiri-quran -maxdepth 3 -type f | head -80
+            exit 1
+          fi
           cp "$f" www/fonts/amiri-quran.woff2
+          test -s www/fonts/amiri-quran.woff2
+          echo "Bundled Quran font: $f"
       - name: Make icons
         run: |
           sudo apt-get install -y imagemagick >/dev/null
@@ -64,7 +69,7 @@ jobs:
               convert icon.png -resize ${sz}x${sz} $d/$n.png
             done
           done
-          find android/app/src/main/res -name 'splash.png' -exec convert {} -fill '#0A0F1A' -colorize 100 {} \; || true
+          find android/app/src/main/res -name 'splash.png' -exec convert {} -fill '#0A0F1A' -colorize 100 {} \\; || true
       - name: Sync
         run: npx cap sync android
       - name: Build APK
