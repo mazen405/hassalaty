@@ -69,8 +69,9 @@ jobs:
           for p in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
             d=android/app/src/main/res/mipmap-${p%%:*}
             sz=${p##*:}
+            mkdir -p "$d"
             for n in ic_launcher ic_launcher_round ic_launcher_foreground; do
-              convert icon.png -resize ${sz}x${sz} $d/$n.png
+              convert icon.png -resize ${sz}x${sz} "$d/$n.png"
             done
           done
           find android/app/src/main/res -name 'splash.png' -exec convert {} -fill '#0A0F1A' -colorize 100 {} \\; || true
