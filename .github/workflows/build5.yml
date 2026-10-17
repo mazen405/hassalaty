@@ -24,7 +24,7 @@ jobs:
           mkdir -p www assets
           cp index.html www/index.html
           sudo apt-get update -qq && sudo apt-get install -y imagemagick >/dev/null
-          convert icon.svg -background none -resize 1024x1024 icon.png
+          convert file_00000000b6e882108b00a3ea73e3a86c.png -resize 1024x1024^ -gravity center -extent 1024x1024 icon.png
           cp icon.png assets/icon-only.png
           cp icon.png assets/icon-foreground.png
           mkdir -p ~/.android
