@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head>
-<script>/*hs-updater*/(function(){try{if(!window.__hsLoaded&&location.protocol!=='file:'){var c=localStorage.getItem('hs_app_html');if(c&&c.length>20000){window.__hsLoaded=1;document.open();document.write(c);document.close();}}}catch(e){}})();</script>
+<!-- Legacy cached-app loader removed: always run the current bundled version. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0A0F1A">
@@ -695,7 +695,7 @@ var VIEWS=['home','log','stats','faith','set'];
 function show(v){
   VIEWS.forEach(function(n){$('#v-'+n).hidden=n!==v});
   $$('.nav button').forEach(function(b){if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  var ni=VIEWS.indexOf(v);$('.nav-in').style.setProperty('--i',ni);var pill=$('.nav-in .pill');if(pill)pill.style.transform='translate3d('+(-ni*100)+'%,0,0)';window.scrollTo(0,0);
+  var ni=VIEWS.indexOf(v);var nav=$('.nav-in'),pill=nav&&$('.pill',nav);if(nav)nav.style.setProperty('--i',ni);if(pill){pill.style.transform='none';pill.style.insetInlineStart=(ni*20)+'%';pill.style.width='20%';}window.scrollTo(0,0);
 }
 
 /* ---------- sheets ---------- */
@@ -856,8 +856,11 @@ function chalToggle(n){
 
 /* ---------- PIN ---------- */
 async function hashPin(pin,salt){
-  try{var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+':'+pin));return Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('')}
-  catch(e){var h=5381,s=salt+':'+pin;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return 'x'+h.toString(16)}
+  var input=String(salt)+':'+String(pin);
+  try{if(window.crypto&&crypto.subtle&&window.TextEncoder){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input));return Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('')}}
+  catch(e){}
+  var h1=2166136261;for(var i=0;i<input.length;i++){h1^=input.charCodeAt(i);h1=Math.imul(h1,16777619)}
+  return 'f'+(h1>>>0).toString(16);
 }
 function pinPad(o){
   return new Promise(function(res){
@@ -873,7 +876,7 @@ function pinPad(o){
       if(busy)return;pe.textContent='';
       if(k==='del')digits=digits.slice(0,-1);else if(digits.length<4)digits+=k;
       paint();
-      if(digits.length===4){busy=true;var pin=digits,ok=true;if(o.verify)ok=await o.verify(pin);
+      if(digits.length===4){busy=true;var pin=digits,ok=true;try{if(o.verify)ok=await o.verify(pin)}catch(e){ok=false}
         if(ok)done(pin);else{pe.textContent=o.errMsg||'الرقم السري غير صحيح';digits='';paint();busy=false;vib([30,40,30])}}
     }
     function kd(e){if(ov.style.zIndex!=String(zc))return;if(/^\d$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('del')}
@@ -901,7 +904,7 @@ async function lockIfNeeded(){
 async function setPin(){
   var a=await pinPad({title:'أنشئ رقمًا سريًا جديدًا',sub:'اختر 4 أرقام لا تستخدمها في حساباتك الأخرى',cancelable:true});if(!a)return;
   var b=await pinPad({title:'تأكيد الرقم السري',sub:'أعد إدخال الأرقام نفسها',cancelable:true,verify:async function(p){return p===a},errMsg:'الرقمان غير متطابقين، حاول مرة أخرى'});if(!b)return;
-  var salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+  var salt;try{var rnd=new Uint8Array(16);crypto.getRandomValues(rnd);salt=Array.from(rnd).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}catch(e){salt=String(Date.now())+'-'+Math.random().toString(36).slice(2)+'-'+Math.random().toString(36).slice(2)}
   var hashed=await hashPin(a,salt);
   if(saveS({pinSalt:salt,pinHash:hashed})){unlocked=true;toast('تم حفظ الرقم السري الجديد')}
 }
@@ -1334,5 +1337,5 @@ setTimeout(function(){if(!QURAN&&navigator.onLine!==false)qEnsure()},4000);
 if(window.Capacitor&&LN&&S.rem&&Object.keys(S.rem).some(function(k){return S.rem[k].on}))setTimeout(applyReminders,3000);
 })();
 </script>
-<script>/*hs-update-check*/(function(){try{if(!navigator.onLine)return;fetch('https://mazen405.github.io/hassalaty/app.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){if(t&&t.length>20000&&t.indexOf('hs-updater')>-1)localStorage.setItem('hs_app_html',t)}).catch(function(){})}catch(e){}})();</script>
+<!-- Legacy updater removed to prevent stale app.html from overriding the bundled app. -->
 </body></html>
