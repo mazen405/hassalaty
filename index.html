@@ -899,7 +899,7 @@ async function verifyCurrent(title){
 /* ---------- backup / csv / reset ---------- */
 function backupObj(){
   return {app:'hassalaty',version:2,exportedAt:new Date().toISOString(),
-    settings:{currency:S.currency,theme:S.theme,haptics:S.haptics,jars:S.jars,curJar:S.curJar,challenge:S.challenge,zk:S.zk},
+    settings:{currency:S.currency,theme:S.theme,haptics:S.haptics,jars:S.jars,curJar:S.curJar,challenge:S.challenge,zk:S.zk,budgets:S.budgets,recurring:S.recurring,charityGoalCents:S.charityGoalCents},
     transactions:TX.map(function(t){return {id:t.id,type:t.type,cents:t.cents,note:t.note,at:t.at,jar:t.jar,cat:t.cat}})};
 }
 function copySheet(title,hint,text,fname){
@@ -917,7 +917,7 @@ function exportCSV(){
 async function importText(text){
   var obj;try{obj=JSON.parse(text)}catch(e){toast('النص غير صالح. الصق نسخة احتياطية من حصّالتي كاملة.','err');return}
   if(!obj||obj.app!=='hassalaty'||!Array.isArray(obj.transactions)){toast('هذا الملف ليس نسخة احتياطية من حصّالتي.','err');return}
-  var s=obj.settings||{},jars=Array.isArray(s.jars)&&s.jars.length?s.jars.filter(function(j){return j&&typeof j.id==='string'&&typeof j.name==='string'}).map(function(j){return {id:j.id,name:String(j.name).slice(0,24),goalName:String(j.goalName||'').slice(0,40),goalCents:Number.isInteger(j.goalCents)&&j.goalCents>0?j.goalCents:0}}):null;
+  var s=obj.settings||{},jars=Array.isArray(s.jars)&&s.jars.length?s.jars.filter(function(j){return j&&typeof j.id==='string'&&typeof j.name==='string'}).map(function(j){return {id:j.id,name:String(j.name).slice(0,24),goalName:String(j.goalName||'').slice(0,40),goalCents:Number.isInteger(j.goalCents)&&j.goalCents>0?j.goalCents:0,goalDate:typeof j.goalDate==='string'?j.goalDate:''}}):null;
   if(!jars||!jars.length){var g=s.goalCents;jars=[{id:'main',name:'حصّالتي',goalName:String(s.goalName||'').slice(0,40),goalCents:Number.isInteger(g)&&g>0?g:0}]}
   var ids={};jars.forEach(function(j){ids[j.id]=1});
   var map={},bal={};jars.forEach(function(j){bal[j.id]=0});
@@ -932,7 +932,7 @@ async function importText(text){
   var yes=await ask('استعادة نسخة احتياطية','سيتم استبدال جميع عملياتك الحالية بـ '+Object.keys(map).length+' عملية من الملف. هل تريد المتابعة؟','استعادة',true);
   if(!yes)return;
   D.tx=map;
-  S=Object.assign({},S,{currency:s.currency in CUR?s.currency:S.currency,theme:['auto','light','dark'].indexOf(s.theme)>=0?s.theme:S.theme,haptics:s.haptics!==false,jars:jars,curJar:ids[s.curJar]?s.curJar:jars[0].id,challenge:s.challenge||null,zk:Object.assign({},DEF.zk,s.zk||{})});
+  S=Object.assign({},S,{currency:s.currency in CUR?s.currency:S.currency,theme:['auto','light','dark'].indexOf(s.theme)>=0?s.theme:S.theme,haptics:s.haptics!==false,jars:jars,curJar:ids[s.curJar]?s.curJar:jars[0].id,challenge:s.challenge||null,zk:Object.assign({},DEF.zk,s.zk||{}),budgets:s.budgets&&typeof s.budgets==='object'?s.budgets:{},recurring:Object.assign({},DEF.recurring,s.recurring||{}),charityGoalCents:Number.isInteger(s.charityGoalCents)&&s.charityGoalCents>0?s.charityGoalCents:0});
   applyTheme();persist();rebuildTX();render();toast('تمت استعادة '+Object.keys(map).length+' عملية');
 }
 async function importBackup(file){var t;try{t=await file.text()}catch(e){toast('تعذّرت قراءة الملف.','err');return}return importText(t)}
