@@ -169,7 +169,7 @@ select.field{appearance:auto}
 /* tabs */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surf);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px))}
 .nav-in{--i:0;position:relative;max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-.pill{position:absolute;top:2px;bottom:2px;inset-inline-start:0;width:20%;display:flex;justify-content:center;pointer-events:none;transform:translate3d(calc(var(--i) * -100%),0,0);transition:transform .45s var(--spring)}
+.pill{position:absolute;top:2px;bottom:2px;inset-inline-start:0;width:20%;display:flex;justify-content:center;pointer-events:none;transform:translate3d(0,0,0);transition:transform .45s var(--spring);will-change:transform}
 .pill::before{content:"";width:62px;height:100%;border-radius:16px;background:color-mix(in srgb,var(--brand) 16%,transparent)}
 .nav button{position:relative;z-index:1;background:none;border:0;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:var(--muted);font-size:11.5px;font-weight:700;transition:color .25s,transform .3s var(--spring)}
 .nav button:active{transform:scale(.9)}
@@ -209,7 +209,10 @@ select.field{appearance:auto}
 @keyframes cf{0%{opacity:1;transform:translate3d(0,0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--r))}}
 
 /* welcome */
-.welcome{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .3s}
+.welcome{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 20%,color-mix(in srgb,var(--brand) 17%,var(--bg)),var(--bg) 65%);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .3s}
+.tour-mark{width:112px;height:112px;margin:0 auto 12px;border-radius:36px;display:grid;place-items:center;font-size:54px;color:var(--brand);background:var(--surf);border:1px solid var(--line);box-shadow:0 20px 70px color-mix(in srgb,var(--brand) 20%,transparent);animation:float 3.5s ease-in-out infinite;transform-origin:center}
+.tour-progress{display:flex;justify-content:center;gap:7px;margin:0 0 4px}.tour-progress i{width:7px;height:7px;border-radius:99px;background:var(--line);transition:all .3s}.tour-progress i.on{width:24px;background:var(--brand)}
+.w-in h1{animation:enter .4s var(--out)}.w-in p{min-height:82px;animation:enter .45s var(--out)}
 .w-in{width:100%;max-width:360px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:stretch}
 .w-in svg{width:120px;height:auto;margin:0 auto;animation:float 5s ease-in-out infinite}
 .w-in h1{font:800 30px var(--font);margin:6px 0 0}
@@ -341,6 +344,7 @@ select.field{appearance:auto}
     <section id="v-faith" class="view" aria-label="إيماني" hidden>
       <h2 class="page-t">إيماني</h2>
       <div class="card" id="faithNudge" hidden></div>
+      <div class="note"><b>تنبيه مهم:</b> المحتوى الديني للتذكير والتعلّم، وقد تقع أخطاء في النصوص أو الأحكام أو التصنيف. تحقّق من القرآن والأذكار من مصدر موثوق، واسأل دار الإفتاء المصرية أو عالمًا موثوقًا في مسائل الفتوى. لا تعتمد على التطبيق وحده في تحديد حكم شرعي.</div>
       <div class="fgrid">
         <button class="ftile" data-open="azkar:morning"><span class="ic">🌅</span><b>أذكار الصباح</b><span>حصن المسلم</span></button>
         <button class="ftile" data-open="azkar:evening"><span class="ic">🌙</span><b>أذكار المساء</b><span>حصن المسلم</span></button>
@@ -395,6 +399,7 @@ select.field{appearance:auto}
         <button class="btn outline-danger" id="clearTx">مسح جميع العمليات</button>
         <button class="btn outline-danger" id="resetApp">إعادة ضبط التطبيق</button>
       </div>
+      <div class="group card"><h2>مساعدة وتعلّم</h2><p class="hint" style="margin:0">شرح مبسّط لأهم أقسام التطبيق، ويمكنك تخطّيه في أي وقت.</p><button class="btn ghost" id="helpTour">ابدأ الشرح</button></div>
       <p class="foot">بدون إعلانات وبدون تتبّع. بياناتك على جهازك داخل التطبيق.</p>
     </section>
   </main>
@@ -690,7 +695,7 @@ var VIEWS=['home','log','stats','faith','set'];
 function show(v){
   VIEWS.forEach(function(n){$('#v-'+n).hidden=n!==v});
   $$('.nav button').forEach(function(b){if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
-  $('.nav-in').style.setProperty('--i',VIEWS.indexOf(v));window.scrollTo(0,0);
+  var ni=VIEWS.indexOf(v);$('.nav-in').style.setProperty('--i',ni);var pill=$('.nav-in .pill');if(pill)pill.style.transform='translate3d('+(-ni*100)+'%,0,0)';window.scrollTo(0,0);
 }
 
 /* ---------- sheets ---------- */
@@ -1144,12 +1149,12 @@ function tasbihPage(){
 function zakatPage(){
   var pg=openPage('حاسبة الزكاة'),zk=S.zk,total=totalBal();
   function fv(c){return c?esc(money(c).replace(/,/g,'')):''}
-  pg.body.innerHTML='<div class="card"><p class="hint" style="margin:0">الزكاة تجب في المال إذا بلغ <b>النصاب</b> ومرّ عليه <b>عام هجري كامل</b>، ومقدارها <b>2.5%</b>. النصاب = قيمة <b>85 جرامًا من الذهب عيار 21</b> (حسب دار الإفتاء المصرية).</p>'+
+  pg.body.innerHTML='<div class="card"><p class="hint" style="margin:0">بحسب دار الإفتاء المصرية: نصاب زكاة المال قيمة <b>85 جرامًا من الذهب عيار 21</b>. يبدأ الحول من أول يوم يبلغ فيه المال النصاب، فإذا مرّ <b>عام هجري كامل (نحو 354 يومًا)</b> مع تحقق الشروط وجبت الزكاة بنسبة <b>2.5%</b>. هذه حاسبة إرشادية وليست فتوى شخصية.</p>'+
     '<label for="z-g">سعر جرام الذهب عيار 21 اليوم ('+esc(curName())+')</label><input id="z-g" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.gold)+'">'+
     '<label>مجموع حصّالاتك</label><div class="field" style="display:flex;align-items:center"><span class="num">'+money(total)+'</span></div>'+
     '<label for="z-o">مدخرات أخرى (نقد، حساب بنكي، ذهب...)</label><input id="z-o" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.other)+'">'+
     '<label for="z-d">ديون حالّة عليك</label><input id="z-d" class="field" inputmode="decimal" dir="ltr" placeholder="0.00" value="'+fv(zk.debt)+'">'+
-    '<label for="z-s">تاريخ بلوغ المال النصاب (بداية الحول)</label><input id="z-s" type="date" class="field" max="'+today()+'" value="'+esc(zk.start||'')+'">'+
+    '<label for="z-s">تاريخ أول بلوغ للنصاب (بداية الحول الهجري)</label><input id="z-s" type="date" class="field" max="'+today()+'" value="'+esc(zk.start||'')+'"><p class="hint">إذا لم يبلغ مالك النصاب فلا يبدأ الحول. إذا نقص المال عن النصاب خلال السنة أو عليك ديون أو عندك ذهب أو تجارة، فقد تختلف طريقة الحساب حسب الحالة؛ راجع دار الإفتاء المصرية.</p>'+
     '<button class="btn primary" style="width:100%;margin-top:16px" id="z-go">احسب</button><div id="z-res"></div></div>'+
     '<p class="hint" style="margin:12px 4px 0">هذه الحاسبة للمساعدة، وللحالات الخاصة (ذهب مُستعمل، أسهم، تجارة...) راجع دار الإفتاء أو أحد أهل العلم.</p>';
   function num(id){var v=$(id,pg.el).value.trim();if(!v)return 0;var c=parseAmount(v);return c===null?NaN:c}
@@ -1181,7 +1186,7 @@ function sadaqaPage(){
   var pg=openPage('الصدقة'),now=new Date(),ms=new Date(now.getFullYear(),now.getMonth(),1).getTime(),ys=new Date(now.getFullYear(),0,1).getTime();
   pg.body.innerHTML='<div class="card"><div class="tiles" style="grid-template-columns:repeat(2,1fr);margin-top:0"><div class="tile"><b class="num">'+money(sumCat(['sadaqa'],ms))+'</b><span>صدقاتك هذا الشهر</span></div><div class="tile"><b class="num">'+money(sumCat(['sadaqa'],ys))+'</b><span>هذه السنة</span></div></div>'+
     '<div class="actions" style="margin-top:14px"><button class="btn primary" id="sd-add">سجّل صدقة</button><button class="btn ghost" id="sd-rem">ذكّرني بالصدقة</button></div></div>'+
-    '<p class="hint" style="margin:12px 4px 0">تُسجَّل الصدقة كسحب من حصّالتك بتصنيف «صدقة»، فتظهر في إحصائياتك. للزكاة المفروضة استخدم حاسبة الزكاة.</p>';
+    '<div class="note" style="margin-top:12px"><b>إمتى تبدأ الصدقة؟</b><br>في أي وقت وبأي مبلغ تقدر عليه؛ لا يشترط لها نصاب ولا حول سنوي. وهي تطوّع، ولا تُعدّ تلقائيًا زكاة مال واجبة. لو تقصد إخراج زكاة، استخدم حاسبة الزكاة وسجّلها بنيّة الزكاة.</div><p class="hint" style="margin:12px 4px 0">تُسجَّل الصدقة كسحب من حصّالتك بتصنيف «صدقة»، فتظهر في إحصائياتك. للزكاة المفروضة استخدم حاسبة الزكاة.</p>'; 
   $('#sd-add',pg.el).onclick=function(){txSheet('out',null,{cat:'sadaqa',note:'صدقة'})};
   $('#sd-rem',pg.el).onclick=function(){remindersPage()};
 }
@@ -1297,9 +1302,24 @@ $('#bkImport').onclick=function(){
 };
 $('#bkFile').onchange=function(e){var f=e.target.files&&e.target.files[0];if(f)importBackup(f)};
 $('#clearTx').onclick=clearTx;$('#resetApp').onclick=function(){resetApp(false)};
+$('#helpTour').onclick=function(){startTour(true)};
+function startTour(manual){
+  var steps=[
+    {icon:'✦',title:'أهلًا بيك في حصّالتي',body:'مساحة بسيطة لتنظيم فلوسك وأهدافك. بياناتك محفوظة على جهازك، فاعمل نسخة احتياطية لو هتغيّر الموبايل.'},
+    {icon:'🏺',title:'الحصّالات والأهداف',body:'أنشئ حصّالة لكل هدف، وحدد مبلغًا وتاريخًا اختياريًا. شريط التقدم يوضح قربك من الهدف.'},
+    {icon:'↗',title:'الإيداع والمصروفات',body:'سجّل كل مبلغ داخل أو خارج، واختار تصنيفًا واضحًا. راجع سجل العمليات لو احتجت تعدّل أو تحذف عملية.'},
+    {icon:'▦',title:'الميزانيات والإحصائيات',body:'حدد حدودًا شهرية للتصنيفات، واستخدم الإحصائيات لمتابعة دخلك ومصروفاتك وتحديات الادخار.'},
+    {icon:'🤲',title:'الصدقة والزكاة',body:'الصدقة التطوعية ممكن تبدأ بأي مبلغ وفي أي وقت. زكاة المال لها شروط منها النصاب والحول، والحاسبة إرشادية فقط. راجع التنبيه الديني داخل قسم «إيماني».'},
+    {icon:'🔒',title:'حماية بياناتك',body:'الرقم السري يحمي فتح التطبيق لكنه ليس بديلًا عن النسخة الاحتياطية. صدّر نسخة احتياطية واحفظها بمكان آمن.'}
+  ];var idx=0,ov=document.createElement('div');ov.className='welcome';ov.style.zIndex='5000';ov.innerHTML='<div class="w-in"><div class="tour-mark" id="tourIcon">✦</div><div class="tour-progress" id="tourProg"></div><h1 id="tourTitle"></h1><p id="tourBody"></p><div class="actions"><button class="btn primary" id="tourNext">التالي</button><button class="btn ghost" id="tourSkip">تخطّي الشرح</button></div></div>';document.body.appendChild(ov);
+  var icon=$('#tourIcon',ov),title=$('#tourTitle',ov),body=$('#tourBody',ov),next=$('#tourNext',ov),prog=$('#tourProg',ov);
+  function close(){ov.remove();if(!manual){D.welcomed=true;persist(false)}}
+  function draw(){var x=steps[idx];icon.textContent=x.icon;title.textContent=x.title;body.textContent=x.body;prog.innerHTML=steps.map(function(_,i){return '<i class="'+(i===idx?'on':'')+'"></i>'}).join('');next.textContent=idx===steps.length-1?'ابدأ الاستخدام':'التالي';}
+  next.onclick=function(){if(idx<steps.length-1){idx++;draw()}else close()};$('#tourSkip',ov).onclick=close;draw();
+}
 /* ---------- boot ---------- */
 loadData();applyTheme();ready=true;processRecurring();render();show('home');qState();
-lockIfNeeded();
+lockIfNeeded().then(function(){if(!D.welcomed)startTour(false)}).catch(function(){locking=false});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 if(!D.updatedAt&&!Object.keys(D.tx).length){idbGet('data_v2').then(function(v){if(v&&v.tx&&Object.keys(v.tx).length){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return}loadData();render();toast('تم استرجاع بياناتك المحفوظة')}}).catch(function(){})}
 setTimeout(function(){if(!QURAN&&navigator.onLine!==false)qEnsure()},4000);
