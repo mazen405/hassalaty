@@ -74,7 +74,6 @@ jobs:
               convert icon.png -resize ${sz}x${sz} "$d/$n.png"
             done
           done
-          find android/app/src/main/res -name 'splash.png' -exec convert {} -fill '#0A0F1A' -colorize 100 {} \\; || true
       - name: Sync
         run: npx cap sync android
       - name: Build APK
