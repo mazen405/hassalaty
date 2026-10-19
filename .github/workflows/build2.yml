@@ -63,7 +63,7 @@ jobs:
           mkdir -p ~/.android
           cp debug.keystore ~/.android/debug.keystore
           keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey
-          python3 -c 'from pathlib import Path; p=Path("android/app/build.gradle"); s=p.read_text(); s=s.replace("    buildTypes {", "    buildTypes {\\n        debug {\\n            signingConfig signingConfigs.debug\\n        }", 1); s=s.replace("    android {", "    android {\\n    signingConfigs {\\n        debug {\\n            storeFile file(System.getProperty(\\\"user.home\\\") + \\\"/.android/debug.keystore\\\")\\n            storePassword \\\"android\\\"\\n            keyAlias \\\"androiddebugkey\\\"\\n            keyPassword \\\"android\\\"\\n        }\\n    }", 1) if "signingConfigs {" not in s else s; p.write_text(s)'
+          python3 -c 'from pathlib import Path; p=Path("android/app/build.gradle"); s=p.read_text(); s=s.replace("    buildTypes {", "    buildTypes {\\n        debug {\\n            signingConfig signingConfigs.debug\\n        }", 1); s=s.replace("android {", "android {\\n    signingConfigs {\\n        debug {\\n            storeFile file(System.getProperty(\\\"user.home\\\") + \\\"/.android/debug.keystore\\\")\\n            storePassword \\\"android\\\"\\n            keyAlias \\\"androiddebugkey\\\"\\n            keyPassword \\\"android\\\"\\n        }\\n    }", 1) if "signingConfigs {" not in s else s; p.write_text(s)'
 
       - name: Sync
         run: npx cap sync android
