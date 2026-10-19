@@ -60,7 +60,7 @@ jobs:
               if not p.exists():
                   continue
               s=p.read_text()
-              items='    <item name="android:navigationBarColor">#000000</item>\\n    <item name="android:navigationBarDividerColor">#000000</item>\\n    <item name="android:windowLightNavigationBar">false</item>\\n'
+              items='    <item name="android:navigationBarColor">#000000</item>\n    <item name="android:navigationBarDividerColor">#000000</item>\n    <item name="android:windowLightNavigationBar">false</item>\n'
               if 'android:navigationBarColor' not in s:
                   s=s.replace('</style>', items+'  </style>', 1)
                   p.write_text(s)
