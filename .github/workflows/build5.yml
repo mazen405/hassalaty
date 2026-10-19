@@ -95,6 +95,20 @@ jobs:
               convert icon.png -resize ${sz}x${sz} "$d/$n.png"
             done
           done
+      - name: Keep app upgrade-compatible
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, re
+          p = Path('android/app/build.gradle')
+          s = p.read_text()
+          code = int(os.environ.get('GITHUB_RUN_NUMBER', '1')) + 1
+          s, n = re.subn(r'versionCode\\s+\\d+', f'versionCode {code}', s, count=1)
+          if not n:
+              raise SystemExit('Could not find versionCode in android/app/build.gradle')
+          p.write_text(s)
+          print(f'Android versionCode set to {code}')
+          PY
       - name: Sync
         run: npx cap sync android
       - name: Build APK
