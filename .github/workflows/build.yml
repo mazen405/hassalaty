@@ -70,6 +70,27 @@ jobs:
         continue-on-error: true
         run: npx capacitor-assets generate --android --iconBackgroundColor '#DCE6FF' --iconBackgroundColorDark '#DCE6FF'
 
+      - name: Fix adaptive icon background resource
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          res = Path('android/app/src/main/res')
+          values = res / 'values'
+          values.mkdir(parents=True, exist_ok=True)
+          colors = values / 'colors.xml'
+          color = '<color name="ic_launcher_background">#DCE6FF</color>'
+          if colors.exists():
+              text = colors.read_text()
+              if 'name="ic_launcher_background"' not in text:
+                  text = text.replace('</resources>', f'  {color}\\n</resources>')
+                  colors.write_text(text)
+          else:
+              colors.write_text(f'<resources>\\n  {color}\\n</resources>\\n')
+          for p in (res / 'mipmap-anydpi-v26').glob('ic_launcher*.xml'):
+              text = p.read_text().replace('@mipmap/ic_launcher_background', '@color/ic_launcher_background')
+              p.write_text(text)
+          PY
+
       - name: Keep app upgrade-compatible
         run: |
           python3 - <<'PY'
