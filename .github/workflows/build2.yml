@@ -31,8 +31,6 @@ jobs:
           convert icon.png -resize 1024x1024^ -gravity center -extent 1024x1024 icon.png
           cp icon.png assets/icon-only.png
           cp icon.png assets/icon-foreground.png
-          mkdir -p ~/.android
-          cp debug.keystore ~/.android/debug.keystore
 
       - name: Install Capacitor
         run: |
@@ -60,10 +58,26 @@ jobs:
       - name: Configure stable APK signing
         run: |
           set -e
-          mkdir -p ~/.android
-          cp debug.keystore ~/.android/debug.keystore
-          keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey
-          test -s ~/.android/debug.keystore
+          keytool -list -keystore debug.keystore -storepass android -alias androiddebugkey
+          test -s debug.keystore
+          cat >> android/app/build.gradle <<'EOF'
+
+          android {
+              signingConfigs {
+                  stable {
+                      storeFile file("../../debug.keystore")
+                      storePassword "android"
+                      keyAlias "androiddebugkey"
+                      keyPassword "android"
+                  }
+              }
+              buildTypes {
+                  debug {
+                      signingConfig signingConfigs.stable
+                  }
+              }
+          }
+          EOF
 
       - name: Sync
         run: npx cap sync android
