@@ -37,13 +37,34 @@ jobs:
       - name: Install Capacitor
         run: |
           npm init -y
-          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @fontsource/cairo
           npm install -D @capacitor/assets@3
 
+      - name: Bundle Arabic font
+        run: |
+          mkdir -p www/fonts
+          for weight in 400 700; do
+            f=$(find node_modules/@fontsource/cairo/files -type f -name "cairo-arabic-$weight-normal.woff2" -print -quit)
+            if [ -z "$f" ]; then echo "Cairo Arabic font weight $weight not found" >&2; exit 1; fi
+            cp "$f" "www/fonts/cairo-arabic-$weight-normal.woff2"
+          done
       - name: Create Android project
         run: |
           echo '{"appId":"com.hassalaty.app","appName":"حصّالتي","webDir":"www"}' > capacitor.config.json
           npx cap add android
+      - name: Set black Android navigation bar
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in [Path('android/app/src/main/res/values/styles.xml'), Path('android/app/src/main/res/values-night/styles.xml')]:
+              if not p.exists():
+                  continue
+              s=p.read_text()
+              items='    <item name="android:navigationBarColor">#000000</item>\\n    <item name="android:navigationBarDividerColor">#000000</item>\\n    <item name="android:windowLightNavigationBar">false</item>\\n'
+              if 'android:navigationBarColor' not in s:
+                  s=s.replace('</style>', items+'  </style>', 1)
+                  p.write_text(s)
+          PY
 
       - name: Generate icons
         continue-on-error: true
