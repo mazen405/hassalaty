@@ -103,7 +103,7 @@ jobs:
           p = Path('android/app/build.gradle')
           s = p.read_text()
           code = int(os.environ.get('GITHUB_RUN_NUMBER', '1')) + 1
-          s, n = re.subn(r'versionCode\\s+\\d+', f'versionCode {code}', s, count=1)
+          s, n = re.subn(r'versionCode\s+\d+', f'versionCode {code}', s, count=1)
           if not n:
               raise SystemExit('Could not find versionCode in android/app/build.gradle')
           p.write_text(s)
