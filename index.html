@@ -1464,10 +1464,18 @@ function showIntro(){
   document.body.appendChild(splash);
   var reduce=!!(S&&S.reduceMotion)||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* Keep the branded intro visible for 2.5 seconds, then smoothly reveal PIN entry. */
-  setTimeout(function(){splash.classList.add('intro-out');setTimeout(function(){splash.remove()},reduce?40:740)},reduce?2500:2500);
+  return new Promise(function(resolve){
+    setTimeout(function(){
+      splash.classList.add('intro-out');
+      setTimeout(function(){splash.remove();resolve()},reduce?40:740);
+    },2500);
+  });
 }
-showIntro();
-lockIfNeeded().then(function(){if(!D.welcomed)startTour(false)}).catch(function(){locking=false});
+showIntro().then(function(){
+  return lockIfNeeded();
+}).then(function(){
+  if(!D.welcomed)startTour(false);
+}).catch(function(){locking=false});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 if(!D.updatedAt&&!Object.keys(D.tx).length){idbGet('data_v2').then(function(v){if(v&&v.tx&&Object.keys(v.tx).length){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return}loadData();render();toast('تم استرجاع بياناتك المحفوظة')}}).catch(function(){})}
 setTimeout(function(){if(!QURAN&&navigator.onLine!==false)qEnsure()},4000);
