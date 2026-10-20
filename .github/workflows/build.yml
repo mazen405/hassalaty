@@ -52,18 +52,29 @@ jobs:
         run: |
           echo '{"appId":"com.hassalaty.app","appName":"حصّالتي","webDir":"www"}' > capacitor.config.json
           npx cap add android
-      - name: Set black Android navigation bar
+      - name: Match Android gesture navigation to app theme
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           for p in [Path('android/app/src/main/res/values/styles.xml'), Path('android/app/src/main/res/values-night/styles.xml')]:
               if not p.exists():
                   continue
               s=p.read_text()
-              items='    <item name="android:navigationBarColor">#000000</item>\n    <item name="android:navigationBarDividerColor">#000000</item>\n    <item name="android:windowLightNavigationBar">false</item>\n'
-              if 'android:navigationBarColor' not in s:
-                  s=s.replace('</style>', items+'  </style>', 1)
-                  p.write_text(s)
+              items=[
+                  ('android:navigationBarColor', '#0A0F1A'),
+                  ('android:navigationBarDividerColor', '#0A0F1A'),
+                  ('android:windowLightNavigationBar', 'false'),
+                  ('android:navigationBarContrastEnforced', 'false'),
+              ]
+              for key, value in items:
+                  line=f'<item name="{key}">{value}</item>'
+                  pattern=r'<item name="' + re.escape(key) + r'">.*?</item>'
+                  if re.search(pattern, s):
+                      s=re.sub(pattern, line, s, count=1)
+                  else:
+                      s=s.replace('</style>', '    '+line+'\\n  </style>', 1)
+              p.write_text(s)
           PY
 
       - name: Generate icons
