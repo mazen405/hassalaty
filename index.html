@@ -1429,6 +1429,22 @@ function startTour(manual){
   return false;
  }
  window.addEventListener('keydown',function(e){if(e.key==='Escape'&&goBack())e.preventDefault()});
+/* Edge-swipe back fallback for Android WebView: both screen edges, without hijacking horizontal controls. */
+(function(){
+ var sx=0,sy=0,edge=26,tracking=false;
+ document.addEventListener('touchstart',function(e){
+  if(!e.touches||e.touches.length!==1)return;
+  var t=e.touches[0],el=e.target;
+  if(el&&el.closest&&el.closest('input,textarea,select,button,[role="slider"],.jars,.chips,.grid,.qtext')){tracking=false;return}
+  sx=t.clientX;sy=t.clientY;tracking=(sx<=edge||sx>=window.innerWidth-edge);
+ },{passive:true});
+ document.addEventListener('touchend',function(e){
+  if(!tracking||!e.changedTouches||!e.changedTouches.length)return;
+  tracking=false;var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+  if(Math.abs(dx)<85||Math.abs(dx)<Math.abs(dy)*1.35)return;
+  if(goBack()){e.preventDefault()}
+ },{passive:false});
+})();
  try{var cap=window.Capacitor,app=cap&&cap.Plugins&&cap.Plugins.App;
   if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&app&&app.addListener){
    app.addListener('backButton',function(){if(!goBack()&&app.exitApp)app.exitApp()});
