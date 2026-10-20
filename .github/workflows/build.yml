@@ -37,7 +37,7 @@ jobs:
       - name: Install Capacitor
         run: |
           npm init -y
-          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @fontsource/cairo
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/app@6 @fontsource/cairo
           npm install -D @capacitor/assets@3
 
       - name: Bundle Arabic font
