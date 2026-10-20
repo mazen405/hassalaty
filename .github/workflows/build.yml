@@ -61,10 +61,13 @@ jobs:
               if not p.exists():
                   continue
               s=p.read_text()
+              dark = 'values-night' in str(p)
+              bar_color = '#0A0F1A' if dark else '#F2F5FA'
+              light_bar = 'false' if dark else 'true'
               items=[
-                  ('android:navigationBarColor', '#0A0F1A'),
-                  ('android:navigationBarDividerColor', '#0A0F1A'),
-                  ('android:windowLightNavigationBar', 'false'),
+                  ('android:navigationBarColor', bar_color),
+                  ('android:navigationBarDividerColor', bar_color),
+                  ('android:windowLightNavigationBar', light_bar),
                   ('android:navigationBarContrastEnforced', 'false'),
               ]
               for key, value in items:
