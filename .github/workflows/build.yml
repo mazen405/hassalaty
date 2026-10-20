@@ -68,7 +68,6 @@ jobs:
                   ('android:navigationBarColor', bar_color),
                   ('android:navigationBarDividerColor', bar_color),
                   ('android:windowLightNavigationBar', light_bar),
-                  ('android:navigationBarContrastEnforced', 'false'),
               ]
               for key, value in items:
                   line=f'<item name="{key}">{value}</item>'
