@@ -1343,7 +1343,52 @@ function openFeature(spec){
 }
 
 /* ---------- wiring ---------- */
-$$('.nav button').forEach(function(b){b.onclick=function(){show(b.dataset.view)}});
+$('.nav button').forEach(function(b){b.onclick=function(){show(b.dataset.view)}});
+/* Smooth draggable navigation indicator */
+(function(){
+  var nav=$('.nav-in'),pill=nav&&$('.pill',nav),drag=null,suppressClick=false;
+  if(!nav||!pill)return;
+  nav.style.touchAction='pan-y';
+  nav.addEventListener('pointerdown',function(e){
+    if(e.button!==undefined&&e.button!==0)return;
+    var btn=e.target.closest('button[data-view]');
+    if(!btn)return;
+    var rect=pill.getBoundingClientRect();
+    drag={id:e.pointerId,startX:e.clientX,lastX:e.clientX,origin:rect.left,offset:e.clientX-rect.left,moved:false,btn:btn};
+    try{nav.setPointerCapture(e.pointerId)}catch(err){}
+    pill.style.transition='none';
+  });
+  nav.addEventListener('pointermove',function(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    var dx=e.clientX-drag.startX;
+    if(Math.abs(dx)>5)drag.moved=true;
+    if(drag.moved){
+      e.preventDefault();
+      var min=nav.getBoundingClientRect().left+5;
+      var max=nav.getBoundingClientRect().right-pill.getBoundingClientRect().width-5;
+      var left=Math.max(min,Math.min(max,drag.origin+dx));
+      pill.style.transform='translate3d('+(left-drag.origin)+'px,0,0)';
+      drag.lastX=e.clientX;
+    }
+  });
+  function finish(e){
+    if(!drag|| (e&&e.pointerId!==drag.id))return;
+    var wasMoved=drag.moved, x=drag.lastX;
+    pill.style.transition='';
+    if(wasMoved){
+      suppressClick=true;
+      var buttons=$('button[data-view]',nav),best=null,dist=Infinity;
+      buttons.forEach(function(b){var r=b.getBoundingClientRect(),d=Math.abs(x-(r.left+r.width/2));if(d<dist){dist=d;best=b}});
+      if(best)show(best.dataset.view);
+      setTimeout(function(){suppressClick=false},80);
+    }
+    drag=null;
+  }
+  nav.addEventListener('pointerup',finish);
+  nav.addEventListener('pointercancel',finish);
+  nav.addEventListener('lostpointercapture',finish);
+  nav.addEventListener('click',function(e){if(suppressClick){e.preventDefault();e.stopPropagation()}},true);
+})();
 document.addEventListener('click',function(e){var o=e.target.closest('[data-open]');if(o&&!o.closest('.page'))openFeature(o.dataset.open)});
 $('#toLog').onclick=function(){show('log')};
 $('#btnAdd').onclick=function(){txSheet('in')};
