@@ -20,7 +20,9 @@
   --brand:#2FD1AC;--brand-ink:#04211A;--danger:#FF7D86;--good:#38DDB8;--scrim:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0A0F1A;--surf:#131B2B;--surf2:#1B2539;--ink:#F1F5FD;--muted:#9AA9C0;--line:#243049;
   --brand:#2FD1AC;--brand-ink:#04211A;--danger:#FF7D86;--good:#38DDB8;--scrim:rgba(0,0,0,.6);--shadow:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}
-@font-face{font-family:"Cairo";src:url("fonts/cairo-arabic-400-normal.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}\n@font-face{font-family:"Cairo";src:url("fonts/cairo-arabic-700-normal.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}\n@font-face{font-family:"HS Quran";src:url("fonts/amiri-quran.woff2") format("woff2");font-display:swap}
+@font-face{font-family:"Cairo";src:url("fonts/cairo-arabic-400-normal.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"Cairo";src:url("fonts/cairo-arabic-700-normal.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:"HS Quran";src:url("fonts/amiri-quran.woff2") format("woff2");font-display:swap}
 html,body{margin:0}[hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;
@@ -167,16 +169,16 @@ select.field{appearance:auto}
 .foot{color:var(--muted);font-size:13px;margin:0;padding-inline:4px}
 
 /* Floating navigation dock */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:0 16px calc(10px + env(safe-area-inset-bottom,0px));background:transparent;border:0;pointer-events:none}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:0 16px calc(12px + max(8px,env(safe-area-inset-bottom,0px)));background:transparent;border:0;pointer-events:none;transform:translateZ(0)}
 /* Paint the full system-safe bottom edge to avoid a stray white strip. */
-.nav::after{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:env(safe-area-inset-bottom,0px);background:var(--bg);pointer-events:none}
-.nav-in{--i:0;position:relative;max-width:440px;width:100%;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:5px;border:1px solid color-mix(in srgb,var(--line) 72%,transparent);border-radius:26px;background:color-mix(in srgb,var(--surf) 88%,transparent);box-shadow:0 12px 34px rgba(8,18,34,.16),inset 0 1px 0 rgba(255,255,255,.42);backdrop-filter:blur(22px) saturate(1.35);-webkit-backdrop-filter:blur(22px) saturate(1.35);pointer-events:auto}
+.nav::after{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom,0px) + 12px);background:var(--bg);pointer-events:none}
+.nav-in{--i:0;position:relative;max-width:440px;width:100%;margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:6px;border:1px solid color-mix(in srgb,var(--line) 72%,transparent);border-radius:30px;background:color-mix(in srgb,var(--surf) 78%,transparent);box-shadow:0 12px 34px rgba(8,18,34,.16),inset 0 1px 0 rgba(255,255,255,.42);backdrop-filter:blur(22px) saturate(1.35);-webkit-backdrop-filter:blur(22px) saturate(1.35);pointer-events:auto}
 .pill{position:absolute;top:5px;bottom:5px;inset-inline-start:5px;width:25%;display:flex;justify-content:center;pointer-events:none;transform:translate3d(0,0,0);transition:transform .38s var(--spring);will-change:transform}
 .nav-pop{animation:navPop .38s var(--spring)}@keyframes navPop{0%{transform:scale(1)}45%{transform:scale(1.1)}100%{transform:scale(1)}}
 .btn:active,.chip:active,.cell:active,.ftile:active,.jchip:active{transform:scale(.97)}
 .nav button:active{transform:scale(.94)}
 .pill::before{content:"";width:64px;height:100%;border-radius:19px;background:color-mix(in srgb,var(--brand) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--brand) 10%,transparent)}
-.nav button{position:relative;z-index:1;background:none;border:0;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:11.5px;font-weight:700;transition:color .22s,transform .25s var(--spring)}
+.nav button{position:relative;z-index:1;background:none;border:0;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:12.5px;font-weight:700;transition:color .22s,transform .25s var(--spring)}
 .nav button svg{width:22px;height:22px;transition:transform .3s var(--spring)}
 .nav button[aria-current="page"]{color:var(--brand)}
 .nav button[aria-current="page"] svg{transform:translateY(-1px) scale(1.04)}
@@ -223,6 +225,15 @@ select.field{appearance:auto}
 .developer-credit{display:inline-block;margin:0;font-size:9.5px;letter-spacing:.2px;color:var(--muted);font-weight:800;white-space:nowrap;direction:ltr}
 .deen-shortcuts{margin-bottom:14px}
 @media(max-width:380px){.top{gap:8px}.top .mark{width:32px;height:32px}.top h1{font-size:20px}.header-meta{max-width:56%}.header-dhikr{font-size:9px}.header-dhikr span:first-child{font-size:8.5px}.developer-credit{font-size:8.5px}}
+/* Branded launch splash */
+.intro-splash{position:fixed;inset:0;z-index:6000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden;background:radial-gradient(ellipse at 50% 38%,color-mix(in srgb,var(--brand) 18%,var(--bg)),var(--bg) 68%);animation:introFade .45s ease both}
+.intro-glow{position:absolute;width:260px;height:260px;border-radius:50%;background:color-mix(in srgb,var(--brand) 15%,transparent);filter:blur(55px);animation:introGlow 2s ease-in-out infinite alternate}
+.intro-logo{position:relative;width:108px;height:108px;filter:drop-shadow(0 12px 28px color-mix(in srgb,var(--brand) 25%,transparent));animation:introLogo .85s var(--spring) both}
+.intro-logo svg{width:100%;height:100%}.intro-splash h1{position:relative;margin:8px 0 0;font:800 32px/1.3 var(--font)}.intro-splash p{position:relative;margin:0;color:var(--muted);font-size:15px}
+.intro-loader{position:relative;width:74px;height:3px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:22px}.intro-loader i{display:block;width:35%;height:100%;border-radius:9px;background:var(--brand);animation:introLoad 1s ease-in-out infinite alternate}
+.intro-splash.intro-out{opacity:0;transform:scale(1.025);transition:opacity .38s ease,transform .38s ease;pointer-events:none}
+@keyframes introFade{from{opacity:0}}@keyframes introLogo{from{opacity:0;transform:translateY(18px) scale(.82)}to{opacity:1;transform:none}}@keyframes introGlow{to{transform:scale(1.2);opacity:.55}}@keyframes introLoad{from{transform:translateX(-60px)}to{transform:translateX(60px)}}
+@media(prefers-reduced-motion:reduce){.intro-splash,.intro-splash *{animation:none!important;transition:none!important}}
 /* welcome */
 .welcome{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 20%,color-mix(in srgb,var(--brand) 17%,var(--bg)),var(--bg) 65%);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .3s}
 .tour-mark{width:112px;height:112px;margin:0 auto 12px;border-radius:36px;display:grid;place-items:center;font-size:54px;color:var(--brand);background:var(--surf);border:1px solid var(--line);box-shadow:0 20px 70px color-mix(in srgb,var(--brand) 20%,transparent);animation:float 3.5s ease-in-out infinite;transform-origin:center}
@@ -1405,8 +1416,30 @@ function startTour(manual){
   function draw(){var x=steps[idx];icon.textContent=x.icon;title.textContent=x.title;body.textContent=x.body;prog.innerHTML=steps.map(function(_,i){return '<i class="'+(i===idx?'on':'')+'"></i>'}).join('');next.textContent=idx===steps.length-1?'ابدأ الاستخدام':'التالي';}
   next.onclick=function(){if(idx<steps.length-1){idx++;draw()}else close()};$('#tourSkip',ov).onclick=close;draw();
 }
+/* Android hardware back button and keyboard back handling. */
+(function(){
+ function goBack(){
+  if(LAYERS.length){history.back();return true}
+  if(currentView!=='home'){var prev=viewTrail.pop();if(prev&&prev!==currentView){show(prev);return true}show('home');viewTrail=[];return true}
+  return false;
+ }
+ window.addEventListener('keydown',function(e){if(e.key==='Escape'&&goBack())e.preventDefault()});
+ try{var cap=window.Capacitor,app=cap&&cap.Plugins&&cap.Plugins.App;
+  if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&app&&app.addListener){
+   app.addListener('backButton',function(){if(!goBack()&&app.exitApp)app.exitApp()});
+  }
+ }catch(e){}
+})();
 /* ---------- boot ---------- */
 loadData();applyTheme();ready=true;processRecurring();render();show('home');qState();
+function showIntro(){
+  var splash=document.createElement('div');splash.className='intro-splash';
+  splash.innerHTML='<div class="intro-glow"></div><div class="intro-logo"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="introGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A6"/><stop offset="1" stop-color="#E9A920"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="url(#introGold)"/><circle cx="50" cy="50" r="29" fill="none" stroke="#9A6A0B" stroke-width="3"/><path d="M35 40h30v28H35z M42 32h16v8H42z" fill="none" stroke="#9A6A0B" stroke-width="4" stroke-linejoin="round"/></svg></div><h1>حصّالتي</h1><p>كل جنيه له هدف</p><div class="intro-loader"><i></i></div>';
+  document.body.appendChild(splash);
+  var reduce=!!(S&&S.reduceMotion)||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(function(){splash.classList.add('intro-out');setTimeout(function(){splash.remove()},reduce?60:420)},reduce?450:1350);
+}
+showIntro();
 lockIfNeeded().then(function(){if(!D.welcomed)startTour(false)}).catch(function(){locking=false});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 if(!D.updatedAt&&!Object.keys(D.tx).length){idbGet('data_v2').then(function(v){if(v&&v.tx&&Object.keys(v.tx).length){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){return}loadData();render();toast('تم استرجاع بياناتك المحفوظة')}}).catch(function(){})}
