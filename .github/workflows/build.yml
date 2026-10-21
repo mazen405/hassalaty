@@ -47,7 +47,7 @@ jobs:
         run: |
           mkdir -p www/fonts
           for spec in cairo:400 cairo:700 tajawal:400 tajawal:500 tajawal:700 tajawal:800; do
-            fam=\${spec%%:*}; w=\${spec##*:}
+            fam=${spec%%:*}; w=${spec##*:}
             f=$(find node_modules/@fontsource/$fam/files -type f -name "$fam-arabic-$w-normal.woff2" -print -quit)
             if [ -z "$f" ]; then echo "warning: $fam $w not found" >&2; continue; fi
             cp "$f" "www/fonts/$fam-arabic-$w-normal.woff2"
@@ -148,6 +148,6 @@ jobs:
       - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v\${{ github.run_number }}
-          name: حصّالتي v\${{ github.run_number }}
+          tag_name: v${{ github.run_number }}
+          name: حصّالتي v${{ github.run_number }}
           files: hassalaty.apk
