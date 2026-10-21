@@ -35,8 +35,6 @@ jobs:
           cp source/icon-app.png assets/icon-only.png
           cp source/icon-foreground.png assets/icon-foreground.png
           cp source/icon-foreground.png assets/icon-background.png
-          mkdir -p ~/.android
-          cp debug.keystore ~/.android/debug.keystore
 
       - name: Install Capacitor
         run: |
@@ -120,10 +118,30 @@ jobs:
           import re, time
           p = Path('android/app/build.gradle')
           s = p.read_text()
-          code = int(time.time() // 60)
+          code = int(time.time())
           s, n = re.subn(r'versionCode\s+\d+', f'versionCode {code}', s, count=1)
           if not n:
               raise SystemExit('Could not find versionCode in android/app/build.gradle')
+          marker = 'android {'
+          if marker not in s:
+              raise SystemExit('Could not find android block in android/app/build.gradle')
+          signing = '''
+              signingConfigs {
+                  debug {
+                      storeFile file('../../debug.keystore')
+                      storePassword 'android'
+                      keyAlias 'androiddebugkey'
+                      keyPassword 'android'
+                      storeType 'pkcs12'
+                  }
+              }
+          '''
+          if 'signingConfigs {' not in s:
+              s = s.replace(marker, marker + signing, 1)
+          if re.search(r'buildTypes\\s*\\{', s) and not re.search(r'debug\\s*\\{[^}]*signingConfig\\s+signingConfigs\\.debug', s, re.S):
+              s = re.sub(r'(buildTypes\\s*\\{\\s*debug\\s*\\{)', r'\\1\\n            signingConfig signingConfigs.debug', s, count=1)
+          if not re.search(r'debug\\s*\\{[^}]*signingConfig\\s+signingConfigs\\.debug', s, re.S):
+              raise SystemExit('Could not configure debug signing')
           p.write_text(s)
           print(f'Android versionCode set to {code}')
           PY
@@ -136,6 +154,22 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
+
+
+      - name: Verify APK signing certificate
+        run: |
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)"
+          test -n "$APKSIGNER"
+          ACTUAL="$("$APKSIGNER" verify --print-certs "$APK" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -n 1 | tr '[:lower:]' '[:upper:]')"
+          EXPECTED="0A:9A:87:DE:77:9F:63:41:2A:C7:A0:B0:9D:DF:15:8B:E9:23:70:C2:5B:CC:2A:DA:DF:40:BC:94:1F:97:77:D1"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "APK signing certificate fingerprint mismatch."
+            echo "Expected: $EXPECTED"
+            echo "Actual:   ${ACTUAL:-unavailable}"
+            exit 1
+          fi
+          echo "APK signing certificate fingerprint verified."
 
       - name: Name the file
         run: cp android/app/build/outputs/apk/debug/app-debug.apk hassalaty.apk
