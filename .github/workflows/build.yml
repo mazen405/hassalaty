@@ -23,35 +23,42 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Prepare app files
+      - name: Extract uploaded app version
         run: |
-          mkdir -p www assets
-          cp index.html www/index.html
-          sudo apt-get update -qq && sudo apt-get install -y imagemagick >/dev/null
-          convert icon.svg -background none -resize 1024x1024 icon.png
-          cp icon.png assets/icon-only.png
-          cp icon.png assets/icon-foreground.png
+          test -s hassalaty-update.zip
+          mkdir -p source www assets
+          unzip -o hassalaty-update.zip -d source
+          test -s source/index.html
+          test -s source/icon-app.png
+          test -s source/icon-foreground.png
+          cp source/index.html www/index.html
+          cp source/icon-app.png assets/icon-only.png
+          cp source/icon-foreground.png assets/icon-foreground.png
+          cp source/icon-foreground.png assets/icon-background.png
           mkdir -p ~/.android
           cp debug.keystore ~/.android/debug.keystore
 
       - name: Install Capacitor
         run: |
           npm init -y
-          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/app@6 @fontsource/cairo
-          # Icon assets are prepared from icon.svg above; skip the broken optional generator dependency.
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/app@6 @fontsource/cairo @fontsource/tajawal
 
-      - name: Bundle Arabic font
+      - name: Bundle Arabic fonts
         run: |
           mkdir -p www/fonts
-          for weight in 400 700; do
-            f=$(find node_modules/@fontsource/cairo/files -type f -name "cairo-arabic-$weight-normal.woff2" -print -quit)
-            if [ -z "$f" ]; then echo "Cairo Arabic font weight $weight not found" >&2; exit 1; fi
-            cp "$f" "www/fonts/cairo-arabic-$weight-normal.woff2"
+          for spec in cairo:400 cairo:700 tajawal:400 tajawal:500 tajawal:700 tajawal:800; do
+            fam=\${spec%%:*}; w=\${spec##*:}
+            f=$(find node_modules/@fontsource/$fam/files -type f -name "$fam-arabic-$w-normal.woff2" -print -quit)
+            if [ -z "$f" ]; then echo "warning: $fam $w not found" >&2; continue; fi
+            cp "$f" "www/fonts/$fam-arabic-$w-normal.woff2"
           done
+          test -f www/fonts/tajawal-arabic-400-normal.woff2 || { echo "Tajawal missing" >&2; exit 1; }
+
       - name: Create Android project
         run: |
-          echo '{"appId":"com.hassalaty.app","appName":"حصّالتي","webDir":"www"}' > capacitor.config.json
+          echo '{"appId":"com.hassalaty.app","appName":"حصّالتي","webDir":"www","backgroundColor":"#07110E","android":{"backgroundColor":"#07110E"}}' > capacitor.config.json
           npx cap add android
+
       - name: Match Android gesture navigation to app theme
         run: |
           python3 - <<'PY'
@@ -62,7 +69,7 @@ jobs:
                   continue
               s=p.read_text()
               dark = 'values-night' in str(p)
-              bar_color = '#0A0F1A' if dark else '#F2F5FA'
+              bar_color = '#07110E' if dark else '#F6F3EC'
               light_bar = 'false' if dark else 'true'
               items=[
                   ('android:navigationBarColor', bar_color),
@@ -81,7 +88,7 @@ jobs:
 
       - name: Generate icons
         continue-on-error: true
-        run: npx capacitor-assets generate --android --iconBackgroundColor '#DCE6FF' --iconBackgroundColorDark '#DCE6FF'
+        run: npx capacitor-assets generate --android --iconBackgroundColor '#000000' --iconBackgroundColorDark '#000000'
 
       - name: Fix adaptive icon background resource
         run: |
@@ -92,9 +99,7 @@ jobs:
           values.mkdir(parents=True, exist_ok=True)
           colors = values / 'colors.xml'
           generated_color = values / 'ic_launcher_background.xml'
-          color = '<color name="ic_launcher_background">#DCE6FF</color>'
-          # Capacitor may already generate this color in its own XML file.
-          # Never define the same Android resource twice.
+          color = '<color name="ic_launcher_background">#000000</color>'
           if not generated_color.exists():
               if colors.exists():
                   text = colors.read_text()
@@ -112,16 +117,17 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import os, re
+          import re, time
           p = Path('android/app/build.gradle')
           s = p.read_text()
-          code = int(os.environ.get('GITHUB_RUN_NUMBER', '1')) + 1
+          code = int(time.time() // 60)
           s, n = re.subn(r'versionCode\s+\d+', f'versionCode {code}', s, count=1)
           if not n:
               raise SystemExit('Could not find versionCode in android/app/build.gradle')
           p.write_text(s)
           print(f'Android versionCode set to {code}')
           PY
+
       - name: Sync
         run: npx cap sync android
 
@@ -142,6 +148,6 @@ jobs:
       - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v${{ github.run_number }}
-          name: حصّالتي v${{ github.run_number }}
+          tag_name: v\${{ github.run_number }}
+          name: حصّالتي v\${{ github.run_number }}
           files: hassalaty.apk
