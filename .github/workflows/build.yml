@@ -138,9 +138,9 @@ jobs:
           '''
           if 'signingConfigs {' not in s:
               s = s.replace(marker, marker + signing, 1)
-          if re.search(r'buildTypes\\s*\\{', s) and not re.search(r'debug\\s*\\{[^}]*signingConfig\\s+signingConfigs\\.debug', s, re.S):
-              s = re.sub(r'(buildTypes\\s*\\{\\s*debug\\s*\\{)', r'\\1\\n            signingConfig signingConfigs.debug', s, count=1)
-          if not re.search(r'debug\\s*\\{[^}]*signingConfig\\s+signingConfigs\\.debug', s, re.S):
+          if re.search(r'buildTypes\s*\{', s) and not re.search(r'debug\s*\{[^}]*signingConfig\s+signingConfigs\.debug', s, re.S):
+              s = re.sub(r'(buildTypes\s*\{\s*debug\s*\{)', r'\1\n            signingConfig signingConfigs.debug', s, count=1)
+          if not re.search(r'debug\s*\{[^}]*signingConfig\s+signingConfigs\.debug', s, re.S):
               raise SystemExit('Could not configure debug signing')
           p.write_text(s)
           print(f'Android versionCode set to {code}')
